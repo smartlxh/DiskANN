@@ -764,6 +764,7 @@ template <typename T, typename LabelT> int PQFlashIndex<T, LabelT>::load(uint32_
     std::string pq_table_bin = std::string(index_prefix) + "_pq_pivots.bin";
     std::string pq_compressed_vectors = std::string(index_prefix) + "_pq_compressed.bin";
     std::string _disk_index_file = std::string(index_prefix) + "_disk.index";
+    _pq_table = PQFactory.create_pq_table(PQFactory::Type::PQ);
 #ifdef EXEC_ENV_OLS
     return load_from_separate_paths(files, num_threads, _disk_index_file.c_str(), pq_table_bin.c_str(),
                                     pq_compressed_vectors.c_str());
@@ -819,14 +820,17 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
     this->_aligned_dim = ROUND_UP(pq_file_dim, 8);
 
     size_t npts_u64, nchunks_u64;
-#ifdef EXEC_ENV_OLS
-    diskann::load_bin<uint8_t>(files, pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
-#else
-    diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
-#endif
+//#ifdef EXEC_ENV_OLS
+//    diskann::load_bin<uint8_t>(files, pq_compressed_vectors, this->data, npts_u64, nchunks_u64); // load pq_compressed_vectors
+//#else
+//    diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
+//#endif
+    _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, npts_u64, nchunks_u64);
 
-    this->_num_points = npts_u64;
-    this->_n_chunks = nchunks_u64;
+    //this->_num_points = npts_u64;
+    //this->_n_chunks = nchunks_u64;
+    this->_num_points = _pq_table->get_num_points();
+
 #ifdef EXEC_ENV_OLS
     if (files.fileExists(labels_file))
     {
@@ -969,8 +973,9 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
 #ifdef EXEC_ENV_OLS
     _pq_table.load_pq_centroid_bin(files, pq_table_bin.c_str(), nchunks_u64);
 #else
-    _pq_table.load_pq_centroid_bin(pq_table_bin.c_str(), nchunks_u64);
+    _pq_table.load_pq_centroid_bin(pq_table_bin.c_str(), nchunks_u64); // load pq code_book
 #endif
+
 
     diskann::cout << "Loaded PQ centroids and in-memory compressed vectors. #points: " << _num_points
                   << " #dim: " << _data_dim << " #aligned_dim: " << _aligned_dim << " #chunks: " << _n_chunks
@@ -1335,21 +1340,24 @@ void PQFlashIndex<T, LabelT>::cached_beam_search(const T *query1, const uint64_t
         _nnodes_per_sector > 0 ? 1 : DIV_ROUND_UP(_max_node_len, defaults::SECTOR_LEN);
 
     // query <-> PQ chunk centers distances
-    _pq_table.preprocess_query(query_rotated); // center the query and rotate if
+    _pq_table->preprocess_query(query_rotated); // center the query and rotate if
                                                // we have a rotation matrix
     float *pq_dists = pq_query_scratch->aligned_pqtable_dist_scratch;
-    _pq_table.populate_chunk_distances(query_rotated, pq_dists);
+    _pq_table.populate_chunk_distances(query_rotated, pq_dists);                // calcuate distances to chunk centers
 
     // query <-> neighbor list
     float *dist_scratch = pq_query_scratch->aligned_dist_scratch;
-    uint8_t *pq_coord_scratch = pq_query_scratch->aligned_pq_coord_scratch;
+    uint8_t *pq_coord_scratch = pq_query_scratch->aligned_pq_coord_scratch; // pq 编码后的id
 
     // lambda to batch compute query<-> node distances in PQ space
-    auto compute_dists = [this, pq_coord_scratch, pq_dists](const uint32_t *ids, const uint64_t n_ids,
-                                                            float *dists_out) {
-        diskann::aggregate_coords(ids, n_ids, this->data, this->_n_chunks, pq_coord_scratch);
-        diskann::pq_dist_lookup(pq_coord_scratch, n_ids, this->_n_chunks, pq_dists, dists_out);
-    };
+    // need to to abstract
+//    auto compute_dists = [this, pq_coord_scratch, pq_dists](const uint32_t *ids, const uint64_t n_ids,
+//                                                            float *dists_out) {
+//        // this->data 所有的编码的pq code [1,2,3,4] [1,4,2,4] ......
+//        diskann::aggregate_coords(ids, n_ids, this->data, this->_n_chunks, pq_coord_scratch);
+//        diskann::pq_dist_lookup(pq_coord_scratch, n_ids, this->_n_chunks, pq_dists, dists_out);
+//    };
+
     Timer query_timer, io_timer, cpu_timer;
 
     tsl::robin_set<uint64_t> &visited = query_scratch->visited;
@@ -1381,7 +1389,8 @@ void PQFlashIndex<T, LabelT>::cached_beam_search(const T *query1, const uint64_t
             {
                 // for filtered index, we dont store global centroid data as for unfiltered index, so we use PQ distance
                 // as approximation to decide closest medoid matching the query filter.
-                compute_dists(&medoid_ids[cur_m], 1, dist_scratch);
+                // compute_dists(&medoid_ids[cur_m], 1, dist_scratch);
+                _pq_table->compute_dists(*ids, n_ids, float *dists_out);
                 float cur_expanded_dist = dist_scratch[0];
                 if (cur_expanded_dist < best_dist)
                 {
@@ -1396,7 +1405,8 @@ void PQFlashIndex<T, LabelT>::cached_beam_search(const T *query1, const uint64_t
         }
     }
 
-    compute_dists(&best_medoid, 1, dist_scratch);
+    _pq_table->compute_dists(&best_medoid, 1, dist_scratch);
+    //compute_dists(&best_medoid, 1, dist_scratch);
     retset.insert(Neighbor(best_medoid, dist_scratch[0]));
     visited.insert(best_medoid);
 
@@ -1507,7 +1517,8 @@ void PQFlashIndex<T, LabelT>::cached_beam_search(const T *query1, const uint64_t
 
             // compute node_nbrs <-> query dists in PQ space
             cpu_timer.reset();
-            compute_dists(node_nbrs, nnbrs, dist_scratch);
+            //compute_dists(node_nbrs, nnbrs, dist_scratch); // 计算邻居距离
+            _pq_table->compute_dists(node_nbrs, nnbrs, dist_scratch);
             if (stats != nullptr)
             {
                 stats->n_cmps += (uint32_t)nnbrs;

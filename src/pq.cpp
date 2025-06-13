@@ -9,6 +9,7 @@
 #include "partition.h"
 #include "math_utils.h"
 #include "tsl/robin_map.h"
+#include "pq_factory.h"
 
 // block size for reading/processing large files and matrices in blocks
 #define BLOCK_SIZE 5000000
@@ -286,6 +287,13 @@ void aggregate_coords(const std::vector<uint32_t> &ids, const uint8_t *all_coord
     }
 }
 
+
+/*
+ * pq_ids: [1,2,3,4,5,...., n_chunks] 编码的pqid
+ * pq_nchunks: 全精度向量拆分成几个sub vector
+ * pq_dists: 查询向量记录每个质点的距离
+ * dists_out: n_pts 这n个点的总距离
+ */
 void pq_dist_lookup(const uint8_t *pq_ids, const size_t n_pts, const size_t pq_nchunks, const float *pq_dists,
                     std::vector<float> &dists_out)
 {
@@ -1094,7 +1102,7 @@ void generate_disk_quantized_data(const std::string &data_file_to_use, const std
 template <typename T>
 void generate_quantized_data(const std::string &data_file_to_use, const std::string &pq_pivots_path,
                              const std::string &pq_compressed_vectors_path, diskann::Metric compareMetric,
-                             const double p_val, const size_t num_pq_chunks, const bool use_opq,
+                             const double p_val, const size_t num_pq_chunks, const PQType pq_type,
                              const std::string &codebook_prefix)
 {
     size_t train_size, train_dim;
@@ -1111,24 +1119,40 @@ void generate_quantized_data(const std::string &data_file_to_use, const std::str
         if (use_opq) // we also do not center the data for OPQ
             make_zero_mean = false;
 
-        if (!use_opq)
-        {
-            generate_pq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
-                               NUM_KMEANS_REPS_PQ, pq_pivots_path, make_zero_mean);
+        switch () {
+            case PQType::PQ:
+                generate_pq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
+                                   NUM_KMEANS_REPS_PQ, pq_pivots_path, make_zero_mean);
+                delete[] train_data;
+                generate_pq_data_from_pivots<T>(data_file_to_use, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks, pq_pivots_path,
+                                                pq_compressed_vectors_path, use_opq);
+                break;
+            case PQType::OPQ:
+                generate_opq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
+                                    pq_pivots_path, make_zero_mean);
+                delete[] train_data;
+                generate_pq_data_from_pivots<T>(data_file_to_use, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks, pq_pivots_path,
+                                                pq_compressed_vectors_path, use_opq);
+                break;
+            default:
+                throw std::runtime_error("Unsupported PQ type");
         }
-        else
-        {
-            generate_opq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
-                                pq_pivots_path, make_zero_mean);
-        }
-        delete[] train_data;
+
+//        if (!use_opq)
+//        {
+//            generate_pq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
+//                               NUM_KMEANS_REPS_PQ, pq_pivots_path, make_zero_mean);
+//        }
+//        else
+//        {
+//            generate_opq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
+//                                pq_pivots_path, make_zero_mean);
+//        }
     }
     else
     {
         diskann::cout << "Skip Training with predefined pivots in: " << pq_pivots_path << std::endl;
     }
-    generate_pq_data_from_pivots<T>(data_file_to_use, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks, pq_pivots_path,
-                                    pq_compressed_vectors_path, use_opq);
 }
 
 // Instantations of supported templates
