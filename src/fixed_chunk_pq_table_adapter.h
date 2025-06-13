@@ -1,6 +1,6 @@
 // fixed_chunk_pq_table_adapter.h
 #pragma once
-#include "pq_table_base.h"
+#include "../include/pq_table_base.h"
 #include "pq.h" // 包含原始FixedChunkPQTable定义
 
 template <typename T>
