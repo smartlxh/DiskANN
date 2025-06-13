@@ -34,6 +34,6 @@ class PQTableBase {
 #ifdef EXEC_ENV_OLS
     virtual void load_pq_centroid_bin(MemoryMappedFiles &files, const char *pq_table_file, size_t num_chunks) {};
 #else
-    virtual load_pq_centroid_bin(const char *pq_table_file, size_t num_chunks) {};
+    virtual void load_pq_centroid_bin(const char *pq_table_file, size_t num_chunks) {};
 #endif
 };
