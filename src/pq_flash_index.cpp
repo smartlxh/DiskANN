@@ -1390,7 +1390,7 @@ void PQFlashIndex<T, LabelT>::cached_beam_search(const T *query1, const uint64_t
                 // for filtered index, we dont store global centroid data as for unfiltered index, so we use PQ distance
                 // as approximation to decide closest medoid matching the query filter.
                 // compute_dists(&medoid_ids[cur_m], 1, dist_scratch);
-                _pq_table->compute_dists(*ids, n_ids, float *dists_out);
+                _pq_table->compute_dists(&medoid_ids[cur_m], 1, dist_scratch);
                 float cur_expanded_dist = dist_scratch[0];
                 if (cur_expanded_dist < best_dist)
                 {
