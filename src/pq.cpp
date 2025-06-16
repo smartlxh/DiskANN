@@ -1116,23 +1116,23 @@ void generate_quantized_data(const std::string &data_file_to_use, const std::str
         bool make_zero_mean = true;
         if (compareMetric == diskann::Metric::INNER_PRODUCT)
             make_zero_mean = false;
-        if (use_opq) // we also do not center the data for OPQ
+        if (pq_type == PQType::OPQ) // we also do not center the data for OPQ
             make_zero_mean = false;
 
-        switch () {
+        switch (pq_type) {
             case PQType::PQ:
                 generate_pq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
                                    NUM_KMEANS_REPS_PQ, pq_pivots_path, make_zero_mean);
                 delete[] train_data;
                 generate_pq_data_from_pivots<T>(data_file_to_use, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks, pq_pivots_path,
-                                                pq_compressed_vectors_path, use_opq);
+                                                pq_compressed_vectors_path, false);
                 break;
             case PQType::OPQ:
                 generate_opq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
                                     pq_pivots_path, make_zero_mean);
                 delete[] train_data;
                 generate_pq_data_from_pivots<T>(data_file_to_use, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks, pq_pivots_path,
-                                                pq_compressed_vectors_path, use_opq);
+                                                pq_compressed_vectors_path, true);
                 break;
             default:
                 throw std::runtime_error("Unsupported PQ type");

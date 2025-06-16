@@ -184,7 +184,7 @@ template <typename T, typename LabelT = uint32_t> class PQFlashIndex
     uint64_t _n_chunks;
 
     //FixedChunkPQTable _pq_table;
-    std::unique_ptr<PQTableBase<T>> _pq_table;
+    std::unique_ptr<PQTableBase> _pq_table;
 
     // distance comparator
     std::shared_ptr<Distance<T>> _dist_cmp;
