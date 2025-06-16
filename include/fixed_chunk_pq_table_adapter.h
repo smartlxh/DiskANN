@@ -15,12 +15,6 @@ class FixedChunkPQTableAdapter : public PQTableBase {
         pq_table.populate_chunk_distances(query, out_dists);
     }
 
-    void aggregate_coords(const uint32_t* ids, uint64_t n_ids,
-                          const uint8_t* pq_data, uint64_t n_chunks,
-                          uint8_t* out_coords) const override {
-        diskann::aggregate_coords(ids, n_ids, pq_data, n_chunks, out_coords);
-    }
-
     uint64_t get_num_chunks() override {
         return pq_table.get_num_chunks(); // 需要添加该方法到FixedChunkPQTable
     }

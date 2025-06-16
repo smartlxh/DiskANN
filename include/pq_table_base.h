@@ -5,18 +5,13 @@
 
 class PQTableBase {
   public:
-    virtual ~PQTableBase() = default;
+    virtual ~PQTableBase() {};
 
     // 查询预处理（中心化/旋转）
     virtual void preprocess_query(float* query) = 0;
 
     // 计算每个chunk的距离表
     virtual void populate_chunk_distances(const float* query, float* out_dists) = 0;
-
-    // 聚合坐标（根据ID获取PQ码）
-    virtual void aggregate_coords(const uint32_t* ids, uint64_t n_ids,
-                                  const uint8_t* pq_data, uint64_t n_chunks,
-                                  uint8_t* out_coords) const = 0;
 
     // 获取chunk数量 pq
     virtual uint64_t get_num_chunks() = 0;
