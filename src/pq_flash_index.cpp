@@ -971,9 +971,9 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
     }
 
 #ifdef EXEC_ENV_OLS
-    _pq_table.load_pq_centroid_bin(files, pq_table_bin.c_str(), nchunks_u64);
+    _pq_table->load_pq_centroid_bin(files, pq_table_bin.c_str(), nchunks_u64);
 #else
-    _pq_table.load_pq_centroid_bin(pq_table_bin.c_str(), nchunks_u64); // load pq code_book
+    _pq_table->load_pq_centroid_bin(pq_table_bin.c_str(), nchunks_u64); // load pq code_book
 #endif
 
 
