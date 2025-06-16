@@ -8,7 +8,6 @@
 #include "pq_scratch.h"
 #include "pq_flash_index.h"
 #include "cosine_similarity.h"
-#include ""
 
 #ifdef _WINDOWS
 #include "windows_aligned_file_reader.h"
