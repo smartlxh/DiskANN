@@ -7,7 +7,7 @@ enum class PQType { PQ, OPQ, RaBitQ, LSQ };
 
 class PQFactory {
   public:
-    static std::unique_ptr<PQTableBase<T>> create_pq_table(PQType type) {
+    static std::unique_ptr<PQTableBase> create_pq_table(PQType type) {
         switch(type) {
         case PQType::PQ:
         case PQType::OPQ:
