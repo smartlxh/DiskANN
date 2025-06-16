@@ -22,7 +22,7 @@ class FixedChunkPQTableAdapter : public PQTableBase<T> {
         diskann::aggregate_coords(ids, n_ids, pq_data, n_chunks, out_coords);
     }
 
-    uint64_t get_num_chunks() const override {
+    uint64_t get_num_chunks() override {
         return pq_table.get_num_chunks(); // 需要添加该方法到FixedChunkPQTable
     }
 
