@@ -8,13 +8,13 @@ class PQTableBase {
     virtual ~PQTableBase() {};
 
     // 查询预处理（中心化/旋转）
-    virtual void preprocess_query(float* query) = 0;
+    virtual void preprocess_query(float* query);
 
     // 计算每个chunk的距离表
-    virtual void populate_chunk_distances(const float* query, float* out_dists) = 0;
+    virtual void populate_chunk_distances(const float* query, float* out_dists);
 
     // 获取chunk数量 pq
-    virtual uint64_t get_num_chunks() = 0;
+    virtual uint64_t get_num_chunks();
 
     // 支持OPQ等扩展功能的虚函数
     virtual void apply_rotation(float* vec) const { /* 默认无旋转 */ }
