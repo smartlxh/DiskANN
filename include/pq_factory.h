@@ -1,6 +1,7 @@
 // pq_factory.h
 #pragma once
 #include "pq_table_base.h"
+#include "fixed_chunk_pq_table_adapter.h"
 
 enum class PQType { PQ, OPQ, RaBitQ, LSQ };
 
