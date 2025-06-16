@@ -3,16 +3,15 @@
 #include <cstdint>
 #include <vector>
 
-template <typename T>
 class PQTableBase {
   public:
     virtual ~PQTableBase() = default;
 
     // 查询预处理（中心化/旋转）
-    virtual void preprocess_query(const T* query) = 0;
+    virtual void preprocess_query(const float* query) = 0;
 
     // 计算每个chunk的距离表
-    virtual void populate_chunk_distances(const T* query, float* out_dists) const = 0;
+    virtual void populate_chunk_distances(const float* query, float* out_dists) const = 0;
 
     // 聚合坐标（根据ID获取PQ码）
     virtual void aggregate_coords(const uint32_t* ids, uint64_t n_ids,
@@ -23,7 +22,7 @@ class PQTableBase {
     virtual uint64_t get_num_chunks() const = 0;
 
     // 支持OPQ等扩展功能的虚函数
-    virtual void apply_rotation(T* vec) const { /* 默认无旋转 */ }
+    virtual void apply_rotation(float* vec) const { /* 默认无旋转 */ }
 
     virtual void compute_dists(const uint32_t *ids, const uint64_t n_ids, float *dists_out,
                                uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists);

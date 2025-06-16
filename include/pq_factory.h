@@ -5,14 +5,13 @@
 
 enum class PQType { PQ, OPQ, RaBitQ, LSQ };
 
-template <typename T>
 class PQFactory {
   public:
     static std::unique_ptr<PQTableBase<T>> create_pq_table(PQType type) {
         switch(type) {
         case PQType::PQ:
         case PQType::OPQ:
-            return std::make_unique<FixedChunkPQTableAdapter<T>>();
+            return std::make_unique<FixedChunkPQTableAdapter>();
         default:
             return nullptr;
         }

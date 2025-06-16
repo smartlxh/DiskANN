@@ -3,7 +3,6 @@
 #include "pq_table_base.h"
 #include "pq.h" // 包含原始FixedChunkPQTable定义
 
-template <typename T>
 class FixedChunkPQTableAdapter : public PQTableBase<T> {
   public:
     FixedChunkPQTableAdapter() : pq_table(256) {} // 初始化参数可能需要调整
