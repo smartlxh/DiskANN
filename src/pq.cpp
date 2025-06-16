@@ -1115,10 +1115,10 @@ void generate_quantized_data(const std::string &data_file_to_use, const std::str
         bool make_zero_mean = true;
         if (compareMetric == diskann::Metric::INNER_PRODUCT)
             make_zero_mean = false;
+        auto pq_type = PQType::PQ;
         if (pq_type == PQType::OPQ) // we also do not center the data for OPQ
             make_zero_mean = false;
 
-        auto pq_type = PQType::PQ;
         switch (pq_type) {
             case PQType::PQ:
                 generate_pq_pivots(train_data, train_size, (uint32_t)train_dim, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks,
