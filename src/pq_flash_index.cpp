@@ -1390,7 +1390,11 @@ void PQFlashIndex<T, LabelT>::cached_beam_search(const T *query1, const uint64_t
                 // for filtered index, we dont store global centroid data as for unfiltered index, so we use PQ distance
                 // as approximation to decide closest medoid matching the query filter.
                 // compute_dists(&medoid_ids[cur_m], 1, dist_scratch);
-                _pq_table->compute_dists(&medoid_ids[cur_m], 1, dist_scratch);
+                /*
+                 * void compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
+uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
+                 */
+                _pq_table->compute_dists(&medoid_ids[cur_m], 1, dist_scratch, this->data, pq_coord_scratch, pq_dists);
                 float cur_expanded_dist = dist_scratch[0];
                 if (cur_expanded_dist < best_dist)
                 {
@@ -1405,7 +1409,7 @@ void PQFlashIndex<T, LabelT>::cached_beam_search(const T *query1, const uint64_t
         }
     }
 
-    _pq_table->compute_dists(&best_medoid, 1, dist_scratch);
+    _pq_table->compute_dists(&best_medoid, 1, dist_scratch, this->data, pq_coord_scratch, pq_dists);
     //compute_dists(&best_medoid, 1, dist_scratch);
     retset.insert(Neighbor(best_medoid, dist_scratch[0]));
     visited.insert(best_medoid);
@@ -1518,7 +1522,7 @@ void PQFlashIndex<T, LabelT>::cached_beam_search(const T *query1, const uint64_t
             // compute node_nbrs <-> query dists in PQ space
             cpu_timer.reset();
             //compute_dists(node_nbrs, nnbrs, dist_scratch); // 计算邻居距离
-            _pq_table->compute_dists(node_nbrs, nnbrs, dist_scratch);
+            _pq_table->compute_dists(node_nbrs, nnbrs, dist_scratch, this->data, pq_coord_scratch, pq_dists);
             if (stats != nullptr)
             {
                 stats->n_cmps += (uint32_t)nnbrs;
