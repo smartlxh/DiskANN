@@ -28,9 +28,9 @@ class FixedChunkPQTableAdapter : public PQTableBase<T> {
 
     // 扩展功能实现
     void apply_rotation(T* vec) const override {
-        if (pq_table.rotation_applied()) { // 假设存在此方法
-            pq_table.rotate(vec);
-        }
+//        if (pq_table.rotation_applied()) { // 假设存在此方法
+//            pq_table.rotate(vec);
+//        }
     }
 
     void compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out) override {
