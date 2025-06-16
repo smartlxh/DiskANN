@@ -55,12 +55,12 @@ class FixedChunkPQTableAdapter : public PQTableBase {
 #ifdef EXEC_ENV_OLS
     void load_pq_centroid_bin(MemoryMappedFiles &files, const char *pq_table_file, size_t num_chunks) override
     {
-        pq_table->load_pq_centroid_bin(files, pq_table_file, num_chunks);
+        pq_table.load_pq_centroid_bin(files, pq_table_file, num_chunks);
     }
 #else
     void load_pq_centroid_bin(const char *pq_table_file, size_t num_chunks) override
     {
-        pq_table->load_pq_centroid_bin(pq_table_file, num_chunks);
+        pq_table.load_pq_centroid_bin(pq_table_file, num_chunks);
     }
 #endif
 
