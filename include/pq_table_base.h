@@ -19,7 +19,7 @@ class PQTableBase {
                                   uint8_t* out_coords) const = 0;
 
     // 获取chunk数量 pq
-    virtual uint64_t get_num_chunks() const = 0;
+    virtual uint64_t get_num_chunks() = 0;
 
     // 支持OPQ等扩展功能的虚函数
     virtual void apply_rotation(float* vec) const { /* 默认无旋转 */ }
