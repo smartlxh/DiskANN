@@ -3,8 +3,6 @@
 #include "pq_table_base.h"
 #include "fixed_chunk_pq_table_adapter.h"
 
-enum class PQType { PQ, OPQ, RaBitQ, LSQ };
-
 class PQFactory {
   public:
     static std::unique_ptr<PQTableBase> create_pq_table(PQType type) {
