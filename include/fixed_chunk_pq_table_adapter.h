@@ -52,7 +52,7 @@ class FixedChunkPQTableAdapter : public PQTableBase<T> {
     }
 
   private:
-    FixedChunkPQTable pq_table;
+    diskann::FixedChunkPQTable pq_table;
     private size_t npt;
     private size_t ndim;
 };
