@@ -825,7 +825,7 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
 //#else
 //    diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
 //#endif
-    _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, npts_u64, nchunks_u64);
+    _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
 
     //this->_num_points = npts_u64;
     //this->_n_chunks = nchunks_u64;
