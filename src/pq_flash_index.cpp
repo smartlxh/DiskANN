@@ -1584,7 +1584,7 @@ uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
             uint32_t *node_nbrs = (node_buf + 1);
             // compute node_nbrs <-> query dist in PQ space
             cpu_timer.reset();
-            compute_dists(node_nbrs, nnbrs, dist_scratch);
+            _pq_table->compute_dists(node_nbrs, nnbrs, dist_scratch, this->data, pq_coord_scratch, pq_dists);
             if (stats != nullptr)
             {
                 stats->n_cmps += (uint32_t)nnbrs;
