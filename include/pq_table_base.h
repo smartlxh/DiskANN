@@ -11,7 +11,7 @@ class PQTableBase {
     virtual void preprocess_query(float* query) = 0;
 
     // 计算每个chunk的距离表
-    virtual void populate_chunk_distances(const float* query, float* out_dists) const = 0;
+    virtual void populate_chunk_distances(const float* query, float* out_dists) = 0;
 
     // 聚合坐标（根据ID获取PQ码）
     virtual void aggregate_coords(const uint32_t* ids, uint64_t n_ids,

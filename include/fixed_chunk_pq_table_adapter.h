@@ -11,7 +11,7 @@ class FixedChunkPQTableAdapter : public PQTableBase {
         pq_table.preprocess_query(query); // 假设原接口兼容
     }
 
-    void populate_chunk_distances(const float* query, float* out_dists) const override {
+    void populate_chunk_distances(const float* query, float* out_dists) override {
         pq_table.populate_chunk_distances(query, out_dists);
     }
 
