@@ -39,7 +39,7 @@ class FixedChunkPQTableAdapter : public PQTableBase<T> {
         diskann::pq_dist_lookup(pq_coord_scratch, n_ids, this->_n_chunks, pq_dists, dists_out);
     }
 
-    void uint64_t get_num_points() override {
+    uint64_t get_num_points() override {
         return npt;
     }
 
