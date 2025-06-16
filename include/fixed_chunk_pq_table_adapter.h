@@ -33,10 +33,12 @@ class FixedChunkPQTableAdapter : public PQTableBase<T> {
 //        }
     }
 
-    void compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out) override {
+    void compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
+                       uint8_t *data, uint8_t *pq_coord_scratch) override {
         // this->data 所有的编码的pq code [1,2,3,4] [1,4,2,4] ......
-        diskann::aggregate_coords(ids, n_ids, this->data, this->_n_chunks, pq_coord_scratch);
-        diskann::pq_dist_lookup(pq_coord_scratch, n_ids, this->_n_chunks, pq_dists, dists_out);
+        const auto chunks = this->get_num_chunks();
+        diskann::aggregate_coords(ids, n_ids, data, chunks, pq_coord_scratch);
+        diskann::pq_dist_lookup(pq_coord_scratch, n_ids, chunks, pq_dists, dists_out);
     }
 
     uint64_t get_num_points() override {
