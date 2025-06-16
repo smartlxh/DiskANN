@@ -5,7 +5,7 @@
 
 class FixedChunkPQTableAdapter : public PQTableBase {
   public:
-    FixedChunkPQTableAdapter() : pq_table(256) {} // 初始化参数可能需要调整
+    FixedChunkPQTableAdapter() {} // 初始化参数可能需要调整
 
     void preprocess_query(const float* query) override {
         pq_table.preprocess_query(query); // 假设原接口兼容
