@@ -3,15 +3,15 @@
 #include "pq_table_base.h"
 #include "pq.h" // 包含原始FixedChunkPQTable定义
 
-class FixedChunkPQTableAdapter : public PQTableBase<T> {
+class FixedChunkPQTableAdapter : public PQTableBase {
   public:
     FixedChunkPQTableAdapter() : pq_table(256) {} // 初始化参数可能需要调整
 
-    void preprocess_query(const T* query) override {
+    void preprocess_query(const float* query) override {
         pq_table.preprocess_query(query); // 假设原接口兼容
     }
 
-    void populate_chunk_distances(const T* query, float* out_dists) const override {
+    void populate_chunk_distances(const float* query, float* out_dists) const override {
         pq_table.populate_chunk_distances(query, out_dists);
     }
 
