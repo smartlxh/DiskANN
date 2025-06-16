@@ -9,7 +9,6 @@
 #include "partition.h"
 #include "math_utils.h"
 #include "tsl/robin_map.h"
-#include "pq_factory.h"
 
 // block size for reading/processing large files and matrices in blocks
 #define BLOCK_SIZE 5000000

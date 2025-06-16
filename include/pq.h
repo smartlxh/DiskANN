@@ -5,6 +5,7 @@
 
 #include "utils.h"
 #include "pq_common.h"
+#include "pq_factory.h"
 
 namespace diskann
 {
