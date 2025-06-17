@@ -153,7 +153,7 @@ void RabitqQuantizer::load_pq_compressed_vectors(const std::string &bin_file, ui
 }
 
 void RabitqQuantizer::compute_codes(const float* x, uint8_t* codes, size_t n)
-    const {
+{
     compute_codes_core(x, codes, n, centroid);
 
     this->codes = codes;
