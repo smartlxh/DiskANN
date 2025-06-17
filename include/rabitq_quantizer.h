@@ -52,7 +52,7 @@ class RabitqQuantizer : public PQTableBase {
     }
 
     void compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
-                       uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {}
+                       uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override;
 
 
     uint64_t get_num_points() override {
