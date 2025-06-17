@@ -17,7 +17,7 @@ void RabitqQuantizer::train(size_t n, const float* x) override {
 
     center = std::move(centroid);
 }
-
+hhhh
 void RabitqQuantizer::preprocess_query(float* x) override {
     if (_qb == 0) {
         // RaBitDistanceComputerNotQ
