@@ -1,4 +1,4 @@
-#include "rabit_quantizer.h"
+#include "rabitq_quantizer.h"
 
 void RabitqQuantizer::train(size_t n, const float* x) override {
     // compute a centroid
