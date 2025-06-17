@@ -1,6 +1,6 @@
 #include "rabitq_quantizer.h"
 
-void RabitqQuantizer::train(size_t n, const float* x) override {
+void RabitqQuantizer::train(size_t n, const float* x) {
     // compute a centroid
     std::vector<float> centroid(d, 0);
     for (size_t i = 0; i < n; i++) {
@@ -18,7 +18,7 @@ void RabitqQuantizer::train(size_t n, const float* x) override {
     center = std::move(centroid);
 }
 
-void RabitqQuantizer::preprocess_query(float* x) override {
+void RabitqQuantizer::preprocess_query(float* x) {
     if (_qb == 0) {
         // RaBitDistanceComputerNotQ
         // compute the distance from the query to the centroid
@@ -123,7 +123,7 @@ void RabitqQuantizer::preprocess_query(float* x) override {
     }
 }
 
-void RabitqQuantizer::load_pq_compressed_vectors(const std::string &bin_file, uint8_t* &data) override {
+void RabitqQuantizer::load_pq_compressed_vectors(const std::string &bin_file, uint8_t* &data) {
     // TODO
     // load the PQ compressed vectors generated in `train`
     // for now, we just keep the vector in memory to avoid the step write and load.
