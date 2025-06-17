@@ -23,8 +23,8 @@ struct QueryFactorsData {
 class RabitqQuantizer : public PQTableBase {
   public:
     RabitqQuantizer(size_t d = 0, diskann::Metric metric = diskann::Metric::L2) {
-        this.d = d;
-        this.metric = metric;
+        this->d = d;
+        this->metric = metric;
         code_size = get_code_size(d);
     }
 
