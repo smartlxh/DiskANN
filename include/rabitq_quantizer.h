@@ -100,7 +100,7 @@ class RabitqQuantizer : public PQTableBase {
     QueryFactorsData query_fac;
     const uint8_t* codes;
     size_t code_size;
-    diskann::Metric metric;
+    diskann::Metric metric_type;
     // ---------------------------
     // pq
     uint8_t _qb = 0;
