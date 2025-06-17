@@ -81,6 +81,8 @@ class RabitqQuantizer : public PQTableBase {
           const float* centroid_in) const;
 
       float distance_to_code(const uint8_t* code);
+      float fvec_L2sqr(const float* x, const float* y, size_t d);
+      float fvec_norm_L2sqr(const float* x, size_t d);
 
   private:
     // ---------------------------
