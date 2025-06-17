@@ -1,9 +1,10 @@
 #include "rabitq_quantizer.h"
 
+
+//TODO: simd optimize
 float RabitqQuantizer::fvec_L2sqr(const float* x, const float* y, size_t d) {
     size_t i;
     float res = 0;
-    FAISS_PRAGMA_IMPRECISE_LOOP
     for (i = 0; i < d; i++) {
         const float tmp = x[i] - y[i];
         res += tmp * tmp;
@@ -15,7 +16,6 @@ float RabitqQuantizer::fvec_norm_L2sqr(const float* x, size_t d) {
     // the double in the _ref is suspected to be a typo. Some of the manual
     // implementations this replaces used float.
     float res = 0;
-    FAISS_PRAGMA_IMPRECISE_LOOP
     for (size_t i = 0; i != d; ++i) {
         res += x[i] * x[i];
     }
