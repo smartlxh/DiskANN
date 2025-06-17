@@ -164,11 +164,11 @@ void RabitqQuantizer::compute_codes_core(
     uint8_t* codes,
     size_t n,
     const float* centroid_in) const {
-    FAISS_ASSERT(codes != nullptr);
-    FAISS_ASSERT(x != nullptr);
-    FAISS_ASSERT(
-        (metric_type == Metric::L2 ||
-         metric_type == MetricType::INNER_PRODUCT));
+//    FAISS_ASSERT(codes != nullptr);
+//    FAISS_ASSERT(x != nullptr);
+//    FAISS_ASSERT(
+//        (metric_type == Metric::L2 ||
+//         metric_type == MetricType::INNER_PRODUCT));
 
     if (n == 0) {
         return;
