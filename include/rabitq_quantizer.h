@@ -59,9 +59,7 @@ class RabitqQuantizer : public PQTableBase {
         return npt;
     }
 
-    void load_pq_compressed_vectors(const std::string &bin_file, uint8_t* &data) override {
-
-    }
+    void load_pq_compressed_vectors(const std::string &bin_file, uint8_t* &data) override;
 
 #ifdef EXEC_ENV_OLS
     void load_pq_centroid_bin(MemoryMappedFiles &files, const char *pq_table_file, size_t num_chunks) override
