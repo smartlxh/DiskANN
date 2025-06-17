@@ -79,10 +79,10 @@ class RabitqQuantizer : public PQTableBase {
     {
     }
 #endif
-    void RaBitQuantizer::compute_codes(const float* x, uint8_t* codes, size_t n) const;
+    void compute_codes(const float* x, uint8_t* codes, size_t n) const;
 
     private:
-      void RaBitQuantizer::compute_codes_core(
+      void compute_codes_core(
           const float* x,
           uint8_t* codes,
           size_t n,
