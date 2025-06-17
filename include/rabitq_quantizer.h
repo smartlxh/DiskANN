@@ -32,7 +32,7 @@ class RabitqQuantizer : public PQTableBase {
         return (d + 7) / 8 + sizeof(FactorsData);
     }
 
-    void train(idx_t n, const float* x) override;
+    void train(size_t n, const float* x) override;
 
     // every vector is expected to take (d + 7) / 8 + sizeof(FactorsData) bytes,
     void compute_codes(const float* x, uint8_t* codes, size_t n) const;
