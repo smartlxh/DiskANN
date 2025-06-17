@@ -37,13 +37,6 @@ class RabitqQuantizer : public PQTableBase {
     // every vector is expected to take (d + 7) / 8 + sizeof(FactorsData) bytes,
     void compute_codes(const float* x, uint8_t* codes, size_t n) const;
 
-    void compute_codes_core(
-        const float* x,
-        uint8_t* codes,
-        size_t n,
-        const float* centroid_in) const;
-
-
     void preprocess_query(float* x) override;
 
 
