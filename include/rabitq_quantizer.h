@@ -2,6 +2,7 @@
 #pragma once
 #include "pq_table_base.h"
 #include "pq.h" // 包含原始FixedChunkPQTable定义
+#include "distance.h"
 
 struct FactorsData {
     // ||or - c||^2 - ((metric==IP) ? ||or||^2 : 0)
@@ -21,7 +22,7 @@ struct QueryFactorsData {
 // the code copied from faiss#RabitQuantizer.cpp
 class RabitqQuantizer : public PQTableBase {
   public:
-    RaBitQuantizer(size_t d = 0, MetricType metric = MetricType::METRIC_L2) {
+    RaBitQuantizer(size_t d = 0, diskann::Metric metric = diskann::Metric::L2) {
         this.d = d;
         this.metric = metric;
         code_size = get_code_size(d);
@@ -100,7 +101,7 @@ class RabitqQuantizer : public PQTableBase {
     QueryFactorsData query_fac;
     const uint8_t* codes;
     size_t code_size;
-    MetricType metric;
+    diskann::Metric metric;
     // ---------------------------
     // pq
     uint8_t _qb = 0;

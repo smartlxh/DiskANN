@@ -47,7 +47,7 @@ void RabitqQuantizer::preprocess_query(float* x) override {
         query_fac.c2 = 0;
         query_fac.c34 = sum_q * inv_d;
 
-        if (metric_type == MetricType::METRIC_INNER_PRODUCT) {
+        if (metric_type == diskann::Metric::INNER_PRODUCT) {
             // precompute if needed
             query_fac.qr_norm_L2sqr = fvec_norm_L2sqr(x, d);
         }
@@ -116,7 +116,7 @@ void RabitqQuantizer::preprocess_query(float* x) override {
         query_fac.c2 = 2 * v_min * inv_d;
         query_fac.c34 = inv_d * (delta * sum_qq + d * v_min);
 
-        if (metric_type == MetricType::METRIC_INNER_PRODUCT) {
+        if (metric_type == diskann::Metric::INNER_PRODUCT) {
             // precompute if needed
             query_fac.qr_norm_L2sqr = fvec_norm_L2sqr(x, d);
         }
@@ -144,8 +144,8 @@ void RaBitQuantizer::compute_codes_core(
     FAISS_ASSERT(codes != nullptr);
     FAISS_ASSERT(x != nullptr);
     FAISS_ASSERT(
-        (metric_type == MetricType::METRIC_L2 ||
-         metric_type == MetricType::METRIC_INNER_PRODUCT));
+        (metric_type == Metric::L2 ||
+         metric_type == MetricType::INNER_PRODUCT));
 
     if (n == 0) {
         return;
@@ -208,7 +208,7 @@ void RaBitQuantizer::compute_codes_core(
                 : (1.0f / dp_oO);
 
         fac->or_minus_c_l2sqr = norm_L2sqr;
-        if (metric_type == MetricType::METRIC_INNER_PRODUCT) {
+        if (metric_type == diskann::Metric::INNER_PRODUCT) {
             fac->or_minus_c_l2sqr -= or_L2sqr;
         }
 
@@ -268,7 +268,7 @@ float RabitqQuantizer::distance_to_code(const uint8_t* code) {
         const float pre_dist = or_c_l2sqr + query_fac.qr_to_c_L2sqr -
                                2 * fac->dp_multiplier * final_dot;
 
-        if (metric_type == MetricType::METRIC_L2) {
+        if (metric_type == diskann::Metric::L2) {
             // ||or - q||^ 2
             return pre_dist;
         } else {
@@ -361,7 +361,7 @@ float RabitqQuantizer::distance_to_code(const uint8_t* code) {
         const float pre_dist = or_c_l2sqr + query_fac.qr_to_c_L2sqr -
                                2 * fac->dp_multiplier * final_dot;
 
-        if (metric_type == MetricType::METRIC_L2) {
+        if (metric_type == diskann::Metric::L2) {
             // ||or - q||^ 2
             return pre_dist;
         } else {
