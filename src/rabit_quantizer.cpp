@@ -152,7 +152,7 @@ void RabitqQuantizer::load_pq_compressed_vectors(const std::string &bin_file, ui
     // for now, we just keep the vector in memory to avoid the step write and load.
 }
 
-void RaBitqQuantizer::compute_codes(const float* x, uint8_t* codes, size_t n)
+void RabitqQuantizer::compute_codes(const float* x, uint8_t* codes, size_t n)
     const {
     compute_codes_core(x, codes, n, centroid);
 
