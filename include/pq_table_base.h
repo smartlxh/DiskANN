@@ -10,7 +10,7 @@ class PQTableBase {
     // 查询预处理（中心化/旋转）
     virtual void preprocess_query(float* query);
 
-    virtual void train(idx_t n, const float* x);
+    virtual void train(size_t n, const float* x);
 
     // 计算每个chunk的距离表
     virtual void populate_chunk_distances(const float* query, float* out_dists);

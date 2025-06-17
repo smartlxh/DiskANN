@@ -1,6 +1,6 @@
 #include "rabit_quantizer.h"
 
-void RabitqQuantizer::train(idx_t n, const float* x) override {
+void RabitqQuantizer::train(size_t n, const float* x) override {
     // compute a centroid
     std::vector<float> centroid(d, 0);
     for (size_t i = 0; i < n; i++) {
