@@ -93,7 +93,7 @@ class RabitqQuantizer : public PQTableBase {
 
     int d;        ///< vector dimension
     // the rotated and quantized query (qr - c)
-    std::vector<uint8_t> rotated_q;
+    std::vector<uint8_t> rotated_qq;
     // we're using the proposed relayout-ed scheme from 3.3 that allows
     // using popcounts for computing the distance.
     std::vector<uint8_t> rearranged_rotated_qq;
