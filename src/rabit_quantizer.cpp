@@ -156,7 +156,7 @@ void RabitqQuantizer::compute_codes(const float* x, uint8_t* codes, size_t n)
     const {
     compute_codes_core(x, codes, n, centroid);
 
-    this.codes = codes;
+    this->codes = codes;
 }
 
 void RaBitqQuantizer::compute_codes_core(
