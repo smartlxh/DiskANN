@@ -100,6 +100,8 @@ class RabitqQuantizer : public PQTableBase {
     // --------------------------- RaBitDistanceComputerQ
     // the rotated and quantized query (qr - c)
     std::vector<uint8_t> rotated_qq;
+    // the smallest value divisible by 8 that is not smaller than dim
+    size_t popcount_aligned_dim = 0;
 
     // we're using the proposed relayout-ed scheme from 3.3 that allows
     // using popcounts for computing the distance.
