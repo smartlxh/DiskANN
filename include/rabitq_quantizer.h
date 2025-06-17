@@ -105,7 +105,7 @@ class RabitqQuantizer : public PQTableBase {
     // using popcounts for computing the distance.
     std::vector<uint8_t> rearranged_rotated_qq;
     QueryFactorsData query_fac;
-    const uint8_t* codes;
+    uint8_t* codes;
     size_t code_size;
     diskann::Metric metric_type;
     // ---------------------------
