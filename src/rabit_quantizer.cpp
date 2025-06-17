@@ -104,7 +104,7 @@ void RabitqQuantizer::preprocess_query(float* x) {
             v_max = std::max(v_max, v_q);
         }
 
-        const float pow_2_qb = 1 << qb;
+        const float pow_2_qb = 1 << _qb;
 
         const float delta = (v_max - v_min) / (pow_2_qb - 1);
         const float inv_delta = 1.0f / delta;
