@@ -7,6 +7,10 @@ class FixedChunkPQTableAdapter : public PQTableBase {
   public:
     FixedChunkPQTableAdapter() {} // 初始化参数可能需要调整
 
+    void train(idx_t n, const float* x) override {
+        //FixedChunkPQTable write trained data to file and load into memory when search
+    }
+
     void preprocess_query(float* query) override {
         pq_table.preprocess_query(query); // 假设原接口兼容
     }
