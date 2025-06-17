@@ -240,7 +240,7 @@ void RabitqQuantizer::compute_codes_core(
 }
 
 void RabitqQuantizer::compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
-                   uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
+                   uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) {
     for (size_t i = 0; i < n_ids; i++) {
         uint8_t *code = codes + ids[i] * code_size;
         auto distance = distance_to_code(code);
