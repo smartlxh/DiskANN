@@ -22,7 +22,7 @@ struct QueryFactorsData {
 // the code copied from faiss#RabitQuantizer.cpp
 class RabitqQuantizer : public PQTableBase {
   public:
-    RaBitQuantizer(size_t d = 0, diskann::Metric metric = diskann::Metric::L2) {
+    RabitqQuantizer(size_t d = 0, diskann::Metric metric = diskann::Metric::L2) {
         this.d = d;
         this.metric = metric;
         code_size = get_code_size(d);
