@@ -72,7 +72,6 @@ class RabitqQuantizer : public PQTableBase {
     {
     }
 #endif
-    void compute_codes(const float* x, uint8_t* codes, size_t n) const;
 
     private:
       void compute_codes_core(
