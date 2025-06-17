@@ -124,11 +124,11 @@ void RabitqQuantizer::preprocess_query(float* x) {
         popcount_aligned_dim = ((d + 7) / 8) * 8;
         size_t offset = (d + 7) / 8;
 
-        rearranged_rotated_qq.resize(offset * qb);
+        rearranged_rotated_qq.resize(offset * _qb);
         std::fill(rearranged_rotated_qq.begin(), rearranged_rotated_qq.end(), 0);
 
         for (size_t idim = 0; idim < d; idim++) {
-            for (size_t iv = 0; iv < qb; iv++) {
+            for (size_t iv = 0; iv < _qb; iv++) {
                 const bool bit = ((rotated_qq[idim] & (1 << iv)) != 0);
                 rearranged_rotated_qq[iv * offset + idim / 8] |=
                     bit ? (1 << (idim % 8)) : 0;
@@ -330,7 +330,7 @@ float RabitqQuantizer::distance_to_code(const uint8_t* code) {
         const size_t di_64b = (di_8b / 8) * 8;
 
         uint64_t dot_qo = 0;
-        for (size_t j = 0; j < qb; j++) {
+        for (size_t j = 0; j < _qb; j++) {
             const uint8_t* query_j = rearranged_rotated_qq.data() + j * di_8b;
 
             // process 64-bit popcounts
