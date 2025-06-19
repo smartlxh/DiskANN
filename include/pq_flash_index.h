@@ -16,6 +16,7 @@
 #include "tsl/robin_map.h"
 #include "tsl/robin_set.h"
 #include "pq_factory.h"
+#include "pq_table_base.h"
 #define FULL_PRECISION_REORDER_MULTIPLIER 3
 
 namespace diskann
