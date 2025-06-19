@@ -778,12 +778,13 @@ template <typename T, typename LabelT> int PQFlashIndex<T, LabelT>::load(uint32_
 template <typename T, typename LabelT>
 int PQFlashIndex<T, LabelT>::load_from_separate_paths(diskann::MemoryMappedFiles &files, uint32_t num_threads,
                                                       const char *index_filepath, const char *pivots_filepath,
-                                                      const char *compressed_filepath)
+                                                      const char *compressed_filepath, PQType pq_type)
 {
 #else
 template <typename T, typename LabelT>
 int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, const char *index_filepath,
-                                                      const char *pivots_filepath, const char *compressed_filepath)
+                                                      const char *pivots_filepath, const char *compressed_filepath,
+                                                      PQType pq_type)
 {
 #endif
     std::string pq_table_bin = pivots_filepath;
@@ -799,15 +800,20 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
     size_t num_pts_in_label_file = 0;
 
     size_t pq_file_dim, pq_file_num_centroids;
+    if (pq_type == PQType::RaBitQ)
+    {
+        // do nothing for now
+    } else {
 #ifdef EXEC_ENV_OLS
-    get_bin_metadata(files, pq_table_bin, pq_file_num_centroids, pq_file_dim, METADATA_SIZE);
+        get_bin_metadata(files, pq_table_bin, pq_file_num_centroids, pq_file_dim, METADATA_SIZE);
 #else
-    get_bin_metadata(pq_table_bin, pq_file_num_centroids, pq_file_dim, METADATA_SIZE);
+        get_bin_metadata(pq_table_bin, pq_file_num_centroids, pq_file_dim, METADATA_SIZE);
 #endif
+    }
 
     this->_disk_index_file = _disk_index_file;
 
-    if (pq_file_num_centroids != 256)
+    if (pq_file_num_centroids != 256 && pq_type == PQType::PQ)
     {
         diskann::cout << "Error. Number of PQ centroids is not 256. Exiting." << std::endl;
         return -1;
@@ -825,7 +831,12 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
 //#else
 //    diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
 //#endif
-    _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
+    if (pq_type == PQType::RaBitQ)
+    {
+        _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
+    } else {
+        _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
+    }
 
     //this->_num_points = npts_u64;
     //this->_n_chunks = nchunks_u64;

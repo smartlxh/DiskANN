@@ -68,6 +68,8 @@ DISKANN_DLLEXPORT int generate_opq_pivots(const float *train_data, size_t num_tr
                                           unsigned num_pq_chunks, std::string opq_pivots_path,
                                           bool make_zero_mean = false);
 
+DISKANN_DLLEXPORT int generate_rabitq_data(const float *train_data, const std::string &data_file, int64_t dim);
+
 DISKANN_DLLEXPORT int generate_pq_pivots_simplified(const float *train_data, size_t num_train, size_t dim,
                                                     size_t num_pq_chunks, std::vector<float> &pivot_data_vector);
 

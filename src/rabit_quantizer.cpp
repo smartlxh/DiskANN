@@ -23,12 +23,43 @@ float RabitqQuantizer::fvec_norm_L2sqr(const float* x, size_t d) {
     return res;
 }
 
-void RabitqQuantizer::train(size_t n, const float* x) {
+void RabitqQuantizer::train(size_t n, const float* x, const std::string data_file) {
+    // read full-precision vector
+    auto base_data_file = "data/sift/sift_learn.fbin"
+    size_t read_blk_size = 64 * 1024 * 1024;
+    cached_ifstream base_reader(base_data_file, read_blk_size);
+    uint32_t npts32;
+    uint32_t basedim32;
+    base_reader.read((char *)&npts32, sizeof(uint32_t));
+    base_reader.read((char *)&basedim32, sizeof(uint32_t));
+    size_t num_points = npts32;
+    size_t dim = basedim32;
+
+    size_t block_size = num_points <= BLOCK_SIZE ? num_points : BLOCK_SIZE;
+    size_t num_blocks = DIV_ROUND_UP(num_points, block_size);
+
+    std::unique_ptr<T[]> block_data_T = std::make_unique<T[]>(block_size * dim);
+    std::unique_ptr<float[]> block_data_float = std::make_unique<float[]>(block_size * dim);
+    std::unique_ptr<float[]> block_data_tmp = std::make_unique<float[]>(block_size * dim);
+
+    for (size_t block = 0; block < num_blocks; block++)
+    {
+        size_t start_id = block * block_size;
+        size_t end_id = (std::min)((block + 1) * block_size, num_points);
+        size_t cur_blk_size = end_id - start_id;
+
+        base_reader.read((char *)(block_data_T.get()), sizeof(T) * (cur_blk_size * dim));
+        diskann::convert_types<T, float>(block_data_T.get(), block_data_tmp.get(), cur_blk_size, dim);
+
+        diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
+    }
+
+
     // compute a centroid
     std::vector<float> centroid(d, 0);
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < d; j++) {
-            centroid[j] += x[i * d + j];
+    for (size_t i = 0; i < npts32; i++) {
+        for (size_t j = 0; j < basedim32; j++) {
+            centroid[j] += block_data_tmp[i * basedim32 + j];
         }
     }
 
@@ -39,6 +70,9 @@ void RabitqQuantizer::train(size_t n, const float* x) {
     }
 
     center = std::move(centroid);
+
+    codes = new uint8_t[npts32 * code_size];
+    compute_codes(block_data_tmp.get(), codes, npts32);
 }
 
 void RabitqQuantizer::preprocess_query(float* x) {
@@ -150,13 +184,12 @@ void RabitqQuantizer::load_pq_compressed_vectors(const std::string &bin_file, ui
     // TODO
     // load the PQ compressed vectors generated in `train`
     // for now, we just keep the vector in memory to avoid the step write and load.
+    train(0, bin_file, nullptr);
 }
 
 void RabitqQuantizer::compute_codes(const float* x, uint8_t* codes, size_t n)
 {
     compute_codes_core(x, codes, n, centroid);
-
-    this->codes = codes;
 }
 
 void RabitqQuantizer::compute_codes_core(
@@ -246,7 +279,6 @@ void RabitqQuantizer::compute_dists (const uint32_t *ids, const uint64_t n_ids, 
         auto distance = distance_to_code(code);
         dists_out[i] = distance;
     }
-
 }
 
 float RabitqQuantizer::distance_to_code(const uint8_t* code) {

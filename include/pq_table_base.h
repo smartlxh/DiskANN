@@ -11,7 +11,7 @@ class PQTableBase {
     // 查询预处理（中心化/旋转）
     virtual void preprocess_query(float* query) = 0;
 
-    virtual void train(size_t n, const float* x) = 0;
+    virtual void train(size_t n, const float* x, const std::string data_file) = 0;
 
 
     // 计算每个chunk的距离表

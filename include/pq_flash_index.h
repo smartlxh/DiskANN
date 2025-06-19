@@ -39,10 +39,11 @@ template <typename T, typename LabelT = uint32_t> class PQFlashIndex
 #ifdef EXEC_ENV_OLS
     DISKANN_DLLEXPORT int load_from_separate_paths(diskann::MemoryMappedFiles &files, uint32_t num_threads,
                                                    const char *index_filepath, const char *pivots_filepath,
-                                                   const char *compressed_filepath);
+                                                   const char *compressed_filepath, PQType pq_type = PQType::PQ);
 #else
     DISKANN_DLLEXPORT int load_from_separate_paths(uint32_t num_threads, const char *index_filepath,
-                                                   const char *pivots_filepath, const char *compressed_filepath);
+                                                   const char *pivots_filepath, const char *compressed_filepath,
+                                                   PQType pq_type = PQType::PQ);
 #endif
 
     DISKANN_DLLEXPORT void load_cache_list(std::vector<uint32_t> &node_list);

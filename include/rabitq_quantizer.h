@@ -28,11 +28,15 @@ class RabitqQuantizer : public PQTableBase {
         code_size = get_code_size(d);
     }
 
+    ~RabitqQuantizer() {
+        delete[] codes;
+    }
+
     static size_t get_code_size(const size_t d) {
         return (d + 7) / 8 + sizeof(FactorsData);
     }
 
-    void train(size_t n, const float* x) override;
+    void train(size_t n, const float* x, const std::string data_file) override;
 
     // every vector is expected to take (d + 7) / 8 + sizeof(FactorsData) bytes,
     void compute_codes(const float* x, uint8_t* codes, size_t n);
