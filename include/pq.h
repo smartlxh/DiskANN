@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "pq_common.h"
 
-enum class PQType { PQ, OPQ, RaBitQ, LSQ };
+enum class PQType { PQ, OPQ, RABITQ, LSQ };
 namespace diskann
 {
 class FixedChunkPQTable

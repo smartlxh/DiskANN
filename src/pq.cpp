@@ -1121,7 +1121,7 @@ void generate_quantized_data(const std::string &data_file_to_use, const std::str
         bool make_zero_mean = true;
         if (compareMetric == diskann::Metric::INNER_PRODUCT)
             make_zero_mean = false;
-        auto pq_type = PQType::RaBitQ;
+        auto pq_type = PQType::RABITQ;
         if (pq_type == PQType::OPQ) // we also do not center the data for OPQ
             make_zero_mean = false;
 
@@ -1140,7 +1140,7 @@ void generate_quantized_data(const std::string &data_file_to_use, const std::str
                 generate_pq_data_from_pivots<T>(data_file_to_use, NUM_PQ_CENTROIDS, (uint32_t)num_pq_chunks, pq_pivots_path,
                                                 pq_compressed_vectors_path, true);
                 break;
-            case PQType::RaBitQ:
+            case PQType::RABITQ:
                 generate_rabitq_data(data_file_to_use, int64_t dim);
                 break;
             default:

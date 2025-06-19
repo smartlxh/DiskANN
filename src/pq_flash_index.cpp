@@ -800,7 +800,7 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
     size_t num_pts_in_label_file = 0;
 
     size_t pq_file_dim, pq_file_num_centroids;
-    if (pq_type == PQType::RaBitQ)
+    if (pq_type == PQType::RABITQ)
     {
         // do nothing for now
     } else {
@@ -831,7 +831,7 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
 //#else
 //    diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
 //#endif
-    if (pq_type == PQType::RaBitQ)
+    if (pq_type == PQType::RABITQ)
     {
         _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
     } else {
