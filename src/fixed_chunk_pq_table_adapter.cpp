@@ -1,6 +1,6 @@
 #include "fixed_chunk_pq_table_adapter.h"
 
-void FixedChunkPQTableAdapter::train(size_t n, const float* x) {
+void FixedChunkPQTableAdapter::train(size_t n, const float* x, const std::string data_file) {
     //FixedChunkPQTable write trained data to file and load into memory when search
 }
 
