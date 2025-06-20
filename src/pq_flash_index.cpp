@@ -826,15 +826,16 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
     this->_aligned_dim = ROUND_UP(pq_file_dim, 8);
 
     size_t npts_u64, nchunks_u64;
-//#ifdef EXEC_ENV_OLS
-//    diskann::load_bin<uint8_t>(files, pq_compressed_vectors, this->data, npts_u64, nchunks_u64); // load pq_compressed_vectors
-//#else
-//    diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
-//#endif
+
     if (pq_type == PQType::RABITQ)
     {
         _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
     } else {
+        #ifdef EXEC_ENV_OLS
+            diskann::load_bin<uint8_t>(files, pq_compressed_vectors, this->data, npts_u64, nchunks_u64); // load pq_compressed_vectors
+        #else
+            diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
+        #endif
         _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
     }
 
