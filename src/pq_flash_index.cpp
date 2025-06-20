@@ -843,17 +843,18 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
         _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
     }
 
-    //this->_data_dim = pq_file_dim;
-    // will change later if we use PQ on disk or if we are using
-    // inner product without PQ
-    this->_disk_bytes_per_point = this->_data_dim * sizeof(T);
-    this->_aligned_dim = ROUND_UP(pq_file_dim, 8);
 
     //this->_num_points = npts_u64;
     //this->_n_chunks = nchunks_u64;
     this->_num_points = _pq_table->get_num_points();
     this->_data_dim = _pq_table->get_dim();
-    diskann:cout << "num_point and dim: " << _num_points << " " << _data_dim << std::endl;
+    //this->_data_dim = pq_file_dim;
+    // will change later if we use PQ on disk or if we are using
+    // inner product without PQ
+    this->_disk_bytes_per_point = this->_data_dim * sizeof(T);
+    this->_aligned_dim = ROUND_UP(_data_dim, 8);
+    diskann:cout << "num_point ,dim, disk_bytes_per_point, _aligned_dim " << _num_points << " "
+             << _data_dim << " " << _disk_bytes_per_point << " " << _aligned_dim << std::endl;
 
 #ifdef EXEC_ENV_OLS
     if (files.fileExists(labels_file))
@@ -1453,8 +1454,11 @@ uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
     std::vector<std::pair<uint32_t, std::pair<uint32_t, uint32_t *>>> cached_nhoods;
     cached_nhoods.reserve(2 * beam_width);
 
+    auto ccount = 0;
     while (retset.has_unexpanded_node() && num_ios < io_limit)
     {
+        ccount++;
+        diskann::cout << "iteration " << ccount << << std::flush;
         // clear iteration state
         frontier.clear();
         frontier_nhoods.clear();
