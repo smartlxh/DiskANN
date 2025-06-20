@@ -414,20 +414,16 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
             std::shuffle(nodes_to_expand.begin(), nodes_to_expand.end(), urng);
         else
             std::sort(nodes_to_expand.begin(), nodes_to_expand.end());
-        diskann::cout << "mmmmmmmmmmmmm";
         diskann::cout << "Level: " << lvl << std::flush;
         bool finish_flag = false;
 
         uint64_t BLOCK_SIZE = 1024;
-        diskann::cout << "nnnnnnnnnnnnnnnn";
         uint64_t nblocks = DIV_ROUND_UP(nodes_to_expand.size(), BLOCK_SIZE);
-        diskann::cout << "wwwwwww";
         for (size_t block = 0; block < nblocks && !finish_flag; block++)
         {
             diskann::cout << "." << std::flush;
             size_t start = block * BLOCK_SIZE;
             size_t end = (std::min)((block + 1) * BLOCK_SIZE, nodes_to_expand.size());
-            diskann::cout << "aaaaaaaaaaaaaaaaaaaa" << std::flush;
             std::vector<uint32_t> nodes_to_read;
             std::vector<T *> coord_buffers(end - start, nullptr);
             std::vector<std::pair<uint32_t, uint32_t *>> nbr_buffers;
@@ -438,10 +434,8 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
                 nbr_buffers.emplace_back(0, new uint32_t[_max_degree + 1]);
             }
 
-            diskann::cout << "bbbbbbbbbbbbbbbbbbbbbbbbb";
             // issue read requests
             auto read_status = read_nodes(nodes_to_read, coord_buffers, nbr_buffers);
-            diskann::cout << "ccccccccccccccccccccccccc";
             // process each nhood buf
             for (uint32_t i = 0; i < read_status.size(); i++)
             {
@@ -476,7 +470,6 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
         lvl++;
     }
 
-    diskann::cout << "fffffff ";
 
     assert(node_set.size() + cur_level->size() == num_nodes_to_cache || cur_level->size() == 0);
 
