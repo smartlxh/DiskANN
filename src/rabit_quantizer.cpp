@@ -246,7 +246,7 @@ void RabitqQuantizer::compute_codes_core(
                 if (xb) {
                     // enable a particular bit
                     code[j / 8] |= (1 << (j % 8));
-                    diskann::cout << "codes: " << j << " " << code[j / 8] << std::endl;
+                    //diskann::cout << "codes: " << j << " " << code[j / 8] << std::endl;
                 }
             }
         }
@@ -281,7 +281,7 @@ void RabitqQuantizer::compute_dists (const uint32_t *ids, const uint64_t n_ids, 
         uint8_t *code = codes + ids[i] * code_size;
         auto distance = distance_to_code(code);
         dists_out[i] = distance;
-        diskann::cout << "dists_out: " << i << " " << distance << std::endl;
+        //diskann::cout << "dists_out: " << i << " " << distance << std::endl;
     }
 }
 
