@@ -28,10 +28,6 @@ class RabitqQuantizer : public PQTableBase {
         code_size = get_code_size(d);
     }
 
-    ~RabitqQuantizer() {
-        delete[] codes;
-    }
-
     static size_t get_code_size(const size_t d) {
         return (d + 7) / 8 + sizeof(FactorsData);
     }
@@ -43,9 +39,12 @@ class RabitqQuantizer : public PQTableBase {
 
     void preprocess_query(float* x) override;
 
+    void populate_chunk_distances(const float* query, float* out_dists) override {
+        // do nothing
+    }
 
     uint64_t get_num_chunks() override {
-        return 0; // 需要添加该方法到FixedChunkPQTable
+        return 0;
     }
 
     // 扩展功能实现
@@ -57,6 +56,8 @@ class RabitqQuantizer : public PQTableBase {
 
     void compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
                        uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override;
+
+
 
 
     uint64_t get_num_points() override {
