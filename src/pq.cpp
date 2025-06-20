@@ -1102,6 +1102,7 @@ int generate_rabitq_data(const float *train_data, const std::string &data_file, 
 //    auto pq_table = std::make_unique<RabitqQuantizer>(dim);
 //
 //    pq_table->train(num_points, train_data);
+    return 0;
 }
 
 template <typename T>

@@ -35,6 +35,7 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     size_t num_points = npts32;
     size_t dim = basedim32;
 
+    size_t BLOCK_SIZE = 8;
     size_t block_size = num_points <= BLOCK_SIZE ? num_points : BLOCK_SIZE;
     size_t num_blocks = DIV_ROUND_UP(num_points, block_size);
 
