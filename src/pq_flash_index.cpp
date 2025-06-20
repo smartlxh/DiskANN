@@ -483,8 +483,8 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
     for (auto node : *cur_level)
         node_list.push_back(node);
 
-    diskann::cout << "Level: " << lvl << std::flush;
     diskann::cout << "bbq";
+    diskann::cout << "Level: " << lvl << std::flush
     diskann::cout << ". #nodes: " << node_list.size() - prev_node_set_size << ", #nodes thus far: " << node_list.size()
                   << std::endl;
     diskann::cout << "done" << std::endl;
