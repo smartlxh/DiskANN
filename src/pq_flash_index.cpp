@@ -800,6 +800,7 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
     size_t num_pts_in_label_file = 0;
 
     size_t pq_file_dim, pq_file_num_centroids;
+    pq_type = PQType::RABITQ;
     if (pq_type == PQType::RABITQ)
     {
         // do nothing for now
