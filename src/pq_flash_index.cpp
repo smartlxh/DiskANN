@@ -425,7 +425,7 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
             diskann::cout << "." << std::flush;
             size_t start = block * BLOCK_SIZE;
             size_t end = (std::min)((block + 1) * BLOCK_SIZE, nodes_to_expand.size());
-
+            diskann::cout << "aaaaaaaaaaaaaaaaaaaa";
             std::vector<uint32_t> nodes_to_read;
             std::vector<T *> coord_buffers(end - start, nullptr);
             std::vector<std::pair<uint32_t, uint32_t *>> nbr_buffers;
@@ -436,12 +436,14 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
                 nbr_buffers.emplace_back(0, new uint32_t[_max_degree + 1]);
             }
 
+            diskann::cout << "bbbbbbbbbbbbbbbbbbbbbbbbb";
             // issue read requests
             auto read_status = read_nodes(nodes_to_read, coord_buffers, nbr_buffers);
-
+            diskann::cout << "ccccccccccccccccccccccccc";
             // process each nhood buf
             for (uint32_t i = 0; i < read_status.size(); i++)
             {
+                diskann::cout << "ddddddddddddddddd " << i;
                 if (read_status[i] == false)
                 {
                     continue;
@@ -450,7 +452,7 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
                 {
                     uint32_t nnbrs = nbr_buffers[i].first;
                     uint32_t *nbrs = nbr_buffers[i].second;
-
+                    diskann::cout << "eeeeeeeeeeeeeeeee ";
                     // explore next level
                     for (uint32_t j = 0; j < nnbrs && !finish_flag; j++)
                     {
@@ -474,6 +476,8 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
         lvl++;
     }
 
+    diskann::cout << "fffffff ";
+
     assert(node_set.size() + cur_level->size() == num_nodes_to_cache || cur_level->size() == 0);
 
     node_list.clear();
@@ -483,7 +487,6 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
     for (auto node : *cur_level)
         node_list.push_back(node);
 
-    diskann::cout << "bbq";
     diskann::cout << "Level: " << lvl << std::flush;
     diskann::cout << ". #nodes: " << node_list.size() - prev_node_set_size << ", #nodes thus far: " << node_list.size()
                   << std::endl;
