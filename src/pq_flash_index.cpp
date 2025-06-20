@@ -445,7 +445,6 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
             // process each nhood buf
             for (uint32_t i = 0; i < read_status.size(); i++)
             {
-                diskann::cout << "ddddddddddddddddd " << i;
                 if (read_status[i] == false)
                 {
                     continue;
@@ -454,7 +453,6 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
                 {
                     uint32_t nnbrs = nbr_buffers[i].first;
                     uint32_t *nbrs = nbr_buffers[i].second;
-                    diskann::cout << "eeeeeeeeeeeeeeeee ";
                     // explore next level
                     for (uint32_t j = 0; j < nnbrs && !finish_flag; j++)
                     {
