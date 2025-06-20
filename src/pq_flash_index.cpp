@@ -828,33 +828,33 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
         return -1;
     }
 
-    this->_data_dim = pq_file_dim;
-    // will change later if we use PQ on disk or if we are using
-    // inner product without PQ
-    this->_disk_bytes_per_point = this->_data_dim * sizeof(T);
-    this->_aligned_dim = ROUND_UP(pq_file_dim, 8);
-
-    size_t npts_u64, nchunks_u64;
-    diskann::cout << "pq_tye " << int(pq_type);
-
     if (pq_type == PQType::RABITQ)
     {
         diskann::cout << "rabitq";
         _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
     } else {
         diskann::cout << "not rabitq";
-        #ifdef EXEC_ENV_OLS
-            diskann::load_bin<uint8_t>(files, pq_compressed_vectors, this->data, npts_u64, nchunks_u64); // load pq_compressed_vectors
-        #else
-            diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
-        #endif
+#ifdef EXEC_ENV_OLS
+        diskann::load_bin<uint8_t>(files, pq_compressed_vectors, this->data, npts_u64, nchunks_u64); // load pq_compressed_vectors
+#else
+        diskann::load_bin<uint8_t>(pq_compressed_vectors, this->data, npts_u64, nchunks_u64);
+#endif
         _pq_table->load_pq_compressed_vectors(pq_compressed_vectors, this->data);
     }
+
+    //this->_data_dim = pq_file_dim;
+    // will change later if we use PQ on disk or if we are using
+    // inner product without PQ
+    this->_disk_bytes_per_point = this->_data_dim * sizeof(T);
+    this->_aligned_dim = ROUND_UP(pq_file_dim, 8);
+
+    size_t npts_u64, nchunks_u64;
 
     //this->_num_points = npts_u64;
     //this->_n_chunks = nchunks_u64;
     this->_num_points = _pq_table->get_num_points();
     this->_data_dim = _pq_table->get_dim();
+    diskann:cout << "num_point and dim: " << _num_points << " " << _data_dim << std::endl;
 
 #ifdef EXEC_ENV_OLS
     if (files.fileExists(labels_file))
