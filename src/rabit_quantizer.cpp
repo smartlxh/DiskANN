@@ -55,7 +55,7 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
         base_reader.read((char *)(block_data_tmp.get()), sizeof(float) * (cur_blk_size * dim));
         //diskann::convert_types<T, float>(block_data_T.get(), block_data_tmp.get(), cur_blk_size, dim);
 
-        diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
+        //diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
     }
 
 
