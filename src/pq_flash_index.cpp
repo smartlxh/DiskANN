@@ -187,6 +187,7 @@ std::vector<bool> PQFlashIndex<T, LabelT>::read_nodes(const std::vector<uint32_t
         if (coord_buffers[i] != nullptr)
         {
             T *node_coords = offset_to_node_coords(node_buf);
+            diskann:cout << "here" << << std::flush;
             memcpy(coord_buffers[i], node_coords, _disk_bytes_per_point);
         }
 
@@ -195,6 +196,7 @@ std::vector<bool> PQFlashIndex<T, LabelT>::read_nodes(const std::vector<uint32_t
             uint32_t *node_nhood = offset_to_node_nhood(node_buf);
             auto num_nbrs = *node_nhood;
             nbr_buffers[i].first = num_nbrs;
+            diskann:cout << "there" << << std::flush;
             memcpy(nbr_buffers[i].second, node_nhood + 1, num_nbrs * sizeof(uint32_t));
         }
     }
