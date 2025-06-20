@@ -427,7 +427,7 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
             diskann::cout << "." << std::flush;
             size_t start = block * BLOCK_SIZE;
             size_t end = (std::min)((block + 1) * BLOCK_SIZE, nodes_to_expand.size());
-            diskann::cout << "aaaaaaaaaaaaaaaaaaaa";
+            diskann::cout << "aaaaaaaaaaaaaaaaaaaa" << std::flush;
             std::vector<uint32_t> nodes_to_read;
             std::vector<T *> coord_buffers(end - start, nullptr);
             std::vector<std::pair<uint32_t, uint32_t *>> nbr_buffers;
