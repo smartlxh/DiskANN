@@ -1057,6 +1057,7 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
     READ_U64(index_metadata, disk_nnodes);
     READ_U64(index_metadata, disk_ndims);
 
+    _num_points = _pq_table->get_num_points();
     if (disk_nnodes != _num_points)
     {
         diskann::cout << "Mismatch in #points for compressed data file and disk "
