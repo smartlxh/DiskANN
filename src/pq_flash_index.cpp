@@ -854,6 +854,7 @@ int PQFlashIndex<T, LabelT>::load_from_separate_paths(uint32_t num_threads, cons
     //this->_num_points = npts_u64;
     //this->_n_chunks = nchunks_u64;
     this->_num_points = _pq_table->get_num_points();
+    this->_data_dim = _pq_table->get_dim();
 
 #ifdef EXEC_ENV_OLS
     if (files.fileExists(labels_file))

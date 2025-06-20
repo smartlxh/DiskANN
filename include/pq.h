@@ -33,6 +33,8 @@ class FixedChunkPQTable
 
     uint32_t get_num_chunks();
 
+    uint32_t get_num_dims();
+
     void preprocess_query(float *query_vec);
 
     // assumes pre-processed query

@@ -15,6 +15,10 @@ class FixedChunkPQTableAdapter : public PQTableBase {
 
     uint64_t get_num_chunks() override;
 
+    uint64_t get_dim() override {
+        return pq_table.get_num_dims();
+    }
+
     // 扩展功能实现
     void apply_rotation(float* vec) const override {
 //        if (pq_table.rotation_applied()) { // 假设存在此方法

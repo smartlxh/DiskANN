@@ -168,6 +168,11 @@ uint32_t FixedChunkPQTable::get_num_chunks()
     return static_cast<uint32_t>(n_chunks);
 }
 
+uint32_t FixedChunkPQTable::get_num_dims()
+{
+    return static_cast<uint32_t>(n_dims);
+}
+
 void FixedChunkPQTable::preprocess_query(float *query_vec)
 {
     for (uint32_t d = 0; d < ndims; d++)

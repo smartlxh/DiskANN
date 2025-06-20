@@ -28,6 +28,8 @@ class PQTableBase {
 
     virtual uint64_t get_num_points() = 0;
 
+    virtual uint64_t get_dim() = 0;
+
     virtual void load_pq_compressed_vectors(const std::string &bin_file, uint8_t* &data) = 0;
 
 #ifdef EXEC_ENV_OLS

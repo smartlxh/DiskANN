@@ -64,6 +64,10 @@ class RabitqQuantizer : public PQTableBase {
         return npt;
     }
 
+    uint64_t get_dim() override {
+        return ndim;
+    }
+
     void load_pq_compressed_vectors(const std::string &bin_file, uint8_t* &data) override;
 
 #ifdef EXEC_ENV_OLS
