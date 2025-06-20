@@ -186,7 +186,7 @@ void RabitqQuantizer::load_pq_compressed_vectors(const std::string &bin_file, ui
     // TODO
     // load the PQ compressed vectors generated in `train`
     // for now, we just keep the vector in memory to avoid the step write and load.
-    train(0, bin_file, nullptr);
+    train(0, nullptr, bin_file);
 }
 
 void RabitqQuantizer::compute_codes(const float* x, uint8_t* codes, size_t n)
