@@ -7,9 +7,7 @@ class FixedChunkPQTableAdapter : public PQTableBase {
   public:
     FixedChunkPQTableAdapter() {} // 初始化参数可能需要调整
 
-    void train(size_t n, const float* x, const std::string data_file) override {
-        //FixedChunkPQTable write trained data to file and load into memory when search
-    }
+    void train(size_t n, const float* x, const std::string data_file) override;
 
     void preprocess_query(float* query) override;
 
