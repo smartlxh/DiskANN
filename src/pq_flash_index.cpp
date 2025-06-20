@@ -414,12 +414,14 @@ void PQFlashIndex<T, LabelT>::cache_bfs_levels(uint64_t num_nodes_to_cache, std:
             std::shuffle(nodes_to_expand.begin(), nodes_to_expand.end(), urng);
         else
             std::sort(nodes_to_expand.begin(), nodes_to_expand.end());
-
+        diskann::cout << "mmmmmmmmmmmmm";
         diskann::cout << "Level: " << lvl << std::flush;
         bool finish_flag = false;
 
         uint64_t BLOCK_SIZE = 1024;
+        diskann::cout << "nnnnnnnnnnnnnnnn";
         uint64_t nblocks = DIV_ROUND_UP(nodes_to_expand.size(), BLOCK_SIZE);
+        diskann::cout << "wwwwwww";
         for (size_t block = 0; block < nblocks && !finish_flag; block++)
         {
             diskann::cout << "." << std::flush;
