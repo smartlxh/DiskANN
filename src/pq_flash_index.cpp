@@ -1458,7 +1458,7 @@ uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
     while (retset.has_unexpanded_node() && num_ios < io_limit)
     {
         ccount++;
-        diskann::cout << "iteration " << ccount << std::flush;
+        //diskann::cout << "iteration " << ccount << std::flush;
         // clear iteration state
         frontier.clear();
         frontier_nhoods.clear();
