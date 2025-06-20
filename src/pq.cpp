@@ -1142,7 +1142,7 @@ void generate_quantized_data(const std::string &data_file_to_use, const std::str
                                                 pq_compressed_vectors_path, true);
                 break;
             case PQType::RABITQ:
-                generate_rabitq_data(data_file_to_use, int64_t dim);
+                generate_rabitq_data(nullptr, data_file_to_use, 0, 0);
                 break;
             default:
                 throw std::runtime_error("Unsupported PQ type");
