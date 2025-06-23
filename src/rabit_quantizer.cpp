@@ -1,5 +1,4 @@
 #include "rabitq_quantizer.h"
-#include "partition.h"
 
 
 //TODO: simd optimize
@@ -26,72 +25,53 @@ float RabitqQuantizer::fvec_norm_L2sqr(const float* x, size_t d) {
 
 void RabitqQuantizer::train(size_t n, const float* x, const std::string data_file) {
     // read full-precision vector
-//    auto base_data_file = "data/sift/sift_learn.fbin";
-//    size_t read_blk_size = 64 * 1024 * 1024;
-//    cached_ifstream base_reader(base_data_file, read_blk_size);
-//    uint32_t npts32;
-//    uint32_t basedim32;
-//    base_reader.read((char *)&npts32, sizeof(uint32_t));
-//    base_reader.read((char *)&basedim32, sizeof(uint32_t));
-//    size_t num_points = npts32;
-//    size_t dim = basedim32;
-//    npt = num_points;
-//    ndim = dim;
-//
-//    size_t BLOCK_SIZE = 8;
-//    size_t block_size = num_points <= BLOCK_SIZE ? num_points : BLOCK_SIZE;
-//    size_t num_blocks = DIV_ROUND_UP(num_points, block_size);
-//
-//    std::vector<float> temp_centroid(d, 0);
-//    // todo template T[]
-//    std::unique_ptr<float[]> block_data_T = std::make_unique<float[]>(block_size * dim);
-//    std::unique_ptr<float[]> block_data_float = std::make_unique<float[]>(block_size * dim);
-//    std::unique_ptr<float[]> block_data_tmp = std::make_unique<float[]>(block_size * dim);
-//
-//    for (size_t block = 0; block < num_blocks; block++)
-//    {
-//        size_t start_id = block * block_size;
-//        size_t end_id = (std::min)((block + 1) * block_size, num_points);
-//        size_t cur_blk_size = end_id - start_id;
-//
-//        base_reader.read((char *)(block_data_tmp.get()), sizeof(float) * (cur_blk_size * dim));
-//        diskann::convert_types<float, float>(block_data_tmp.get(), block_data_T.get(), cur_blk_size, dim);
-//
-//        diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
-//        for (size_t p = 0; p < cur_blk_size; p++)
-//        {
-//            for (uint64_t d = 0; d < dim; d++)
-//            {
-//                temp_centroid[d] += block_data_tmp[p * dim + d];
-//                if (std::isnan(block_data_tmp[p * dim + d])) {
-//                    diskann::cout << "bbq2 nan " << p << " " << d << std::endl;
-//                }
-//            }
-//        }
-//    }
+    auto base_data_file = "data/sift/sift_learn.fbin";
+    size_t read_blk_size = 64 * 1024 * 1024;
+    cached_ifstream base_reader(base_data_file, read_blk_size);
+    uint32_t npts32;
+    uint32_t basedim32;
+    base_reader.read((char *)&npts32, sizeof(uint32_t));
+    base_reader.read((char *)&basedim32, sizeof(uint32_t));
+    size_t num_points = npts32;
+    size_t dim = basedim32;
+    npt = num_points;
+    ndim = dim;
 
-    // hard code
-    const double p_val = ((double)MAX_PQ_TRAINING_SET_SIZE / 100000);
-    size_t slice_size = 0;
-    size_t sample_dim = 0;
-
-    float *train_data;
-    gen_random_slice<float>("data/sift/sift_learn.fbin", p_val, train_data, slice_size, sample_dim);
-    diskann::cout << "sample rabitq train " << slice_size << " " << sample_dim << std::endl;
-
-    npt = slice_size;
-    ndim = sample_dim;
+    size_t BLOCK_SIZE = 8;
+    size_t block_size = num_points <= BLOCK_SIZE ? num_points : BLOCK_SIZE;
+    size_t num_blocks = DIV_ROUND_UP(num_points, block_size);
 
     std::vector<float> temp_centroid(d, 0);
-    for (size_t i = 0; i < slice_size; i++) {
-        for (size_t j = 0; j < d; j++) {
-            temp_centroid[j] += train_data[i * d + j];
+    // todo template T[]
+    std::unique_ptr<float[]> block_data_T = std::make_unique<float[]>(block_size * dim);
+    std::unique_ptr<float[]> block_data_float = std::make_unique<float[]>(block_size * dim);
+    std::unique_ptr<float[]> block_data_tmp = std::make_unique<float[]>(block_size * dim);
+
+    for (size_t block = 0; block < num_blocks; block++)
+    {
+        size_t start_id = block * block_size;
+        size_t end_id = (std::min)((block + 1) * block_size, num_points);
+        size_t cur_blk_size = end_id - start_id;
+
+        base_reader.read((char *)(block_data_tmp.get()), sizeof(float) * (cur_blk_size * dim));
+        diskann::convert_types<float, float>(block_data_tmp.get(), block_data_T.get(), cur_blk_size, dim);
+
+        //diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
+        for (size_t p = 0; p < cur_blk_size; p++)
+        {
+            for (uint64_t d = 0; d < dim; d++)
+            {
+                temp_centroid[d] += block_data_tmp[p * dim + d];
+                if (std::isnan(block_data_tmp[p * dim + d])) {
+                    diskann::cout << "bbq2 nan " << p << " " << d << std::endl;
+                }
+            }
         }
     }
 
-    if (npt != 0) {
+    if (npts32 != 0) {
         for (size_t j = 0; j < d; j++) {
-            temp_centroid[j] /= (float)npt;
+            temp_centroid[j] /= (float)npts32;
             diskann::cout << "norlize " << j << " " << temp_centroid[j] << std::endl;
         }
     }
@@ -99,8 +79,8 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     center = std::move(temp_centroid);
     centroid = center.data();
 
-    codes = new uint8_t[npt * code_size];
-    compute_codes(train_data, codes, npt);
+    codes = new uint8_t[npts32 * code_size];
+    compute_codes(block_data_tmp.get(), codes, npts32);
 }
 
 void RabitqQuantizer::preprocess_query(float* x) {
@@ -308,7 +288,7 @@ void RabitqQuantizer::compute_dists (const uint32_t *ids, const uint64_t n_ids, 
         uint8_t *code = codes + ids[i] * code_size;
         auto distance = distance_to_code(code);
         dists_out[i] = distance;
-        //diskann::cout << "dists_out: " << i << " " << distance << std::endl;
+        diskann::cout << "dists_out: " << i << " " << distance << std::endl;
     }
 }
 
