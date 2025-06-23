@@ -37,7 +37,7 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     npt = num_points;
     ndim = dim;
 
-    size_t BLOCK_SIZE = 8;
+    size_t BLOCK_SIZE = 200000;
     size_t block_size = num_points <= BLOCK_SIZE ? num_points : BLOCK_SIZE;
     size_t num_blocks = DIV_ROUND_UP(num_points, block_size);
 
@@ -61,8 +61,8 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
         {
             for (uint64_t d = 0; d < dim; d++)
             {
-                temp_centroid[d] += block_data_tmp[p * dim + d];
-                if (std::isnan(block_data_tmp[p * dim + d])) {
+                temp_centroid[d] += block_data_T[p * dim + d];
+                if (std::isnan(block_data_T[p * dim + d])) {
                     diskann::cout << "bbq2 nan " << p << " " << d << std::endl;
                 }
             }
@@ -80,7 +80,7 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     centroid = center.data();
 
     codes = new uint8_t[npts32 * code_size];
-    compute_codes(block_data_tmp.get(), codes, npts32);
+    compute_codes(block_data_T.get(), codes, npts32);
 }
 
 void RabitqQuantizer::preprocess_query(float* x) {
