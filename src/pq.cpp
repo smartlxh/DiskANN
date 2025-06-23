@@ -981,6 +981,15 @@ int generate_pq_data_from_pivots(const std::string &data_file, uint32_t num_cent
 
         diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
 
+        for (size_t i = 0; i < num_points; i++) {
+            for (size_t j = 0; j < dim; j++) {
+                if (std::isnan(block_data_T[i * num_points + j])) {
+                    diskann::cout << "bbq2 nan " << i << " " << j << std::endl;
+                }
+                //temp_centroid[j] += block_data_T[i * basedim32 + j];
+            }
+        }
+
         for (size_t p = 0; p < cur_blk_size; p++)
         {
             for (uint64_t d = 0; d < dim; d++)

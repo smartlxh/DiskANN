@@ -1,4 +1,6 @@
 #include "rabitq_quantizer.h"
+#include <thread>
+#include <chrono>
 
 
 //TODO: simd optimize
@@ -53,27 +55,38 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
         size_t cur_blk_size = end_id - start_id;
 
         base_reader.read((char *)(block_data_tmp.get()), sizeof(float) * (cur_blk_size * dim));
-        //diskann::convert_types<T, float>(block_data_T.get(), block_data_tmp.get(), cur_blk_size, dim);
+        diskann::convert_types<float, float>(block_data_tmp.get(), block_data_T.get(), cur_blk_size, dim);
 
         //diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
     }
 
 
     // compute a centroid
-    std::vector<float> centroid(d, 0);
+    diskann::cout << "total " << npts32 << " " << basedim32 << std::endl;
+    std::vector<float> temp_centroid(d, 0);
+    float max = -1;
     for (size_t i = 0; i < npts32; i++) {
         for (size_t j = 0; j < basedim32; j++) {
-            centroid[j] += block_data_tmp[i * basedim32 + j];
+            if (std::isnan(block_data_T[i * basedim32 + j])) {
+                diskann::cout << "bbq2 nan " << i << " " << j << std::endl;
+            }
+            if (block_data_T[i * basedim32 + j] > max) {
+                max = block_data_T[i * basedim32 + j];
+            }
+            temp_centroid[j] += block_data_T[i * basedim32 + j];
         }
     }
+    diskann::cout << "bbq2 max " << max;
 
-    if (n != 0) {
+    if (npts32 != 0) {
         for (size_t j = 0; j < d; j++) {
-            centroid[j] /= (float)n;
+            temp_centroid[j] /= (float)npts32;
+            diskann::cout << "norlize " << j << " " << temp_centroid[j] << std::endl;
         }
     }
 
-    center = std::move(centroid);
+    center = std::move(temp_centroid);
+    centroid = center.data();
 
     codes = new uint8_t[npts32 * code_size];
     compute_codes(block_data_tmp.get(), codes, npts32);
@@ -279,11 +292,17 @@ void RabitqQuantizer::compute_codes_core(
 
 void RabitqQuantizer::compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
                    uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) {
+    uint8_t *code_test = codes + 0 * code_size;
+    diskann::cout << "dists_out0: " << distance_to_code(code_test);
+    code_test = codes + 1 * code_size;
+    diskann::cout << "dists_out1: " << distance_to_code(code_test);
     for (size_t i = 0; i < n_ids; i++) {
         uint8_t *code = codes + ids[i] * code_size;
+        //diskann::cout << "neighbour: " << ids[i] << std::endl << std::flush;
         auto distance = distance_to_code(code);
         dists_out[i] = distance;
         //diskann::cout << "dists_out: " << i << " " << distance << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     }
 }
 
@@ -294,6 +313,7 @@ float RabitqQuantizer::distance_to_code(const uint8_t* code) {
         const uint8_t* binary_data = code;
         const FactorsData* fac =
             reinterpret_cast<const FactorsData*>(code + (d + 7) / 8);
+
 
         // this is the baseline code
         //
