@@ -1,6 +1,4 @@
 #include "rabitq_quantizer.h"
-#include <thread>
-#include <chrono>
 
 
 //TODO: simd optimize
@@ -285,17 +283,11 @@ void RabitqQuantizer::compute_codes_core(
 
 void RabitqQuantizer::compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
                    uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) {
-    uint8_t *code_test = codes + 0 * code_size;
-    diskann::cout << "dists_out0: " << distance_to_code(code_test);
-    code_test = codes + 1 * code_size;
-    diskann::cout << "dists_out1: " << distance_to_code(code_test);
     for (size_t i = 0; i < n_ids; i++) {
         uint8_t *code = codes + ids[i] * code_size;
-        //diskann::cout << "neighbour: " << ids[i] << std::endl << std::flush;
         auto distance = distance_to_code(code);
         dists_out[i] = distance;
         //diskann::cout << "dists_out: " << i << " " << distance << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     }
 }
 
