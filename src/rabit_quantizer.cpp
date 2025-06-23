@@ -43,6 +43,7 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     size_t block_size = num_points <= BLOCK_SIZE ? num_points : BLOCK_SIZE;
     size_t num_blocks = DIV_ROUND_UP(num_points, block_size);
 
+    std::vector<float> temp_centroid(d, 0);
     // todo template T[]
     std::unique_ptr<float[]> block_data_T = std::make_unique<float[]>(block_size * dim);
     std::unique_ptr<float[]> block_data_float = std::make_unique<float[]>(block_size * dim);
@@ -58,25 +59,17 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
         diskann::convert_types<float, float>(block_data_tmp.get(), block_data_T.get(), cur_blk_size, dim);
 
         //diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
-    }
-
-
-    // compute a centroid
-    diskann::cout << "total " << npts32 << " " << basedim32 << std::endl;
-    std::vector<float> temp_centroid(d, 0);
-    float max = -1;
-    for (size_t i = 0; i < npts32; i++) {
-        for (size_t j = 0; j < basedim32; j++) {
-            if (std::isnan(block_data_T[i * basedim32 + j])) {
-                diskann::cout << "bbq2 nan " << i << " " << j << std::endl;
+        for (size_t p = 0; p < cur_blk_size; p++)
+        {
+            for (uint64_t d = 0; d < dim; d++)
+            {
+                temp_centroid[d] += block_data_tmp[p * dim + d];
+                if (std::isnan(block_data_tmp[p * dim + d])) {
+                    diskann::cout << "bbq2 nan " << p << " " << d << std::endl;
+                }
             }
-            if (block_data_T[i * basedim32 + j] > max) {
-                max = block_data_T[i * basedim32 + j];
-            }
-            temp_centroid[j] += block_data_T[i * basedim32 + j];
         }
     }
-    diskann::cout << "bbq2 max " << max;
 
     if (npts32 != 0) {
         for (size_t j = 0; j < d; j++) {
