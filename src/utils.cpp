@@ -151,6 +151,15 @@ double calculate_recall(uint32_t num_queries, uint32_t *gold_std, float *gs_dist
         res.insert(res_vec,
                    res_vec + recall_at); // change to recall_at for recall k@k
                                          // or dim_or for k@dim_or
+        // print result
+        for (int i = 0; i < recall_at; i++) {
+            diskann::count << "res[" << i << "] = " << *(res_vec + i) << std::endl;
+        }
+
+        for (int i = 0; i < tie_breaker; i++) {
+            diskann::count << "gt[" << i << "] = " << *(gt_vec + i) << std::endl;
+        }
+
         uint32_t cur_recall = 0;
         for (auto &v : gt)
         {
