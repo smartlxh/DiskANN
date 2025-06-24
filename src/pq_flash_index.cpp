@@ -1523,7 +1523,7 @@ uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
             if (!_use_disk_index_pq)
             {
                 //cur_expanded_dist = _dist_cmp->compare(aligned_query_T, node_fp_coords_copy, (uint32_t)_aligned_dim);
-                cur_expanded_dist = _pq_table->get_distance_by_row(cached_nhood.firs);
+                cur_expanded_dist = _pq_table->get_distance_by_row(cached_nhood.first);
             }
             else
             {
