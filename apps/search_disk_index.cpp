@@ -225,7 +225,7 @@ int search_disk_index(diskann::Metric &metric, const std::string &index_path_pre
         auto s = std::chrono::high_resolution_clock::now();
 
 #pragma omp parallel for schedule(dynamic, 1)
-        for (int64_t i = 0; i < (int64_t)query_num; i++)
+        for (int64_t i = 0; i < 1; i++)
         {
             if (!filtered_search)
             {
@@ -277,7 +277,7 @@ int search_disk_index(diskann::Metric &metric, const std::string &index_path_pre
         if (calc_recall_flag)
         {
             recall = diskann::calculate_recall((uint32_t)query_num, gt_ids, gt_dists, (uint32_t)gt_dim,
-                                               query_result_ids[test_id].data(), recall_at, recall_at);
+                                               query_result_ids[test_id].data(), query_result_dists[test_id].data(), recall_at, recall_at, _pFlashIndex->get_pq_table());
             best_recall = std::max(recall, best_recall);
         }
 
