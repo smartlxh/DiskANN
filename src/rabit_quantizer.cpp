@@ -34,7 +34,7 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     base_reader.read((char *)&basedim32, sizeof(uint32_t));
     size_t num_points = npts32;
     size_t dim = basedim32;
-    npt = num_points = 10;
+    npt = num_points;
     ndim = dim;
 
     size_t BLOCK_SIZE = 200000;
@@ -47,7 +47,6 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     std::unique_ptr<float[]> block_data_float = std::make_unique<float[]>(block_size * dim);
     std::unique_ptr<float[]> block_data_tmp = std::make_unique<float[]>(block_size * dim);
 
-    float* first_point = new float[dim];
     for (size_t block = 0; block < num_blocks; block++)
     {
         size_t start_id = block * block_size;
@@ -60,32 +59,19 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
         //diskann::cout << "Processing points  [" << start_id << ", " << end_id << ").." << std::flush;
         for (size_t p = 0; p < cur_blk_size; p++)
         {
-            float distance = 0;
             for (uint64_t d = 0; d < dim; d++)
             {
                 temp_centroid[d] += block_data_T[p * dim + d];
                 if (std::isnan(block_data_T[p * dim + d])) {
                     diskann::cout << "bbq2 nan " << p << " " << d << std::endl;
                 }
-                if (p == 0) {
-                    first_point[d] = block_data_T[p * dim + d];
-                } else {
-                    distance += (block_data_T[p * dim + d] - first_point[d]) * (block_data_T[p * dim + d] - first_point[d]);
-                }
             }
-
-            diskann::cout << "distance " << p << " " << distance << std::endl;
-
-            for (uint64_t d = 0; d < dim; d++) {
-                diskann::cout << "point " << p <<":" << block_data_T[p * dim + d] << std::endl;
-            }
-
         }
     }
 
-    if (npt != 0) {
+    if (npts32 != 0) {
         for (size_t j = 0; j < d; j++) {
-            temp_centroid[j] /= (float)npt;
+            temp_centroid[j] /= (float)npts32;
             diskann::cout << "norlize " << j << " " << temp_centroid[j] << std::endl;
         }
     }
@@ -93,14 +79,8 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     center = std::move(temp_centroid);
     centroid = center.data();
 
-    codes = new uint8_t[npt * code_size];
-    compute_codes(block_data_T.get(), codes, npt);
-
-    diskann::cout << "train done and print code" << std::endl;
-    preprocess_query(first_point);
-    for (int i = 0; i < npt; i++) {
-        diskann::cout << "point " << i << " " << distance_to_code(codes + i * code_size) << std::endl;
-    }
+    codes = new uint8_t[npts32 * code_size];
+    compute_codes(block_data_T.get(), codes, npts32);
 }
 
 void RabitqQuantizer::preprocess_query(float* x) {
@@ -301,7 +281,7 @@ void RabitqQuantizer::compute_codes_core(
     }
 }
 
-void RabitqQuantizer::compute_dists(const uint32_t *ids, const uint64_t n_ids, float *dists_out,
+void RabitqQuantizer::compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
                    uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) {
     memset(dists_out, 0, n_ids * sizeof(float));
     for (size_t i = 0; i < n_ids; i++) {
