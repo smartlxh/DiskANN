@@ -283,7 +283,6 @@ void RabitqQuantizer::compute_codes_core(
 
 void RabitqQuantizer::compute_dists (const uint32_t *ids, const uint64_t n_ids, float *dists_out,
                    uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) {
-    diskann::cout << "compute_dists " << metric_type <<  std::endl;
     memset(dists_out, 0, n_ids * sizeof(float));
     for (size_t i = 0; i < n_ids; i++) {
         uint8_t *code = codes + ids[i] * code_size;
@@ -338,6 +337,7 @@ float RabitqQuantizer::distance_to_code(const uint8_t* code) {
 
         if (metric_type == diskann::Metric::L2) {
             // ||or - q||^ 2
+            diskann::cout << "L2 dddddddddddddddd" << std::endl;
             return pre_dist;
         } else {
             // metric == MetricType::METRIC_INNER_PRODUCT
@@ -430,7 +430,6 @@ float RabitqQuantizer::distance_to_code(const uint8_t* code) {
                                2 * fac->dp_multiplier * final_dot;
 
         if (metric_type == diskann::Metric::L2) {
-            diskann::cout << "L2 dddddddddddddddd" << std::endl;
             // ||or - q||^ 2
             return pre_dist;
         } else {
