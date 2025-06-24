@@ -1522,7 +1522,8 @@ uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
             float cur_expanded_dist;
             if (!_use_disk_index_pq)
             {
-                cur_expanded_dist = _dist_cmp->compare(aligned_query_T, node_fp_coords_copy, (uint32_t)_aligned_dim);
+                //cur_expanded_dist = _dist_cmp->compare(aligned_query_T, node_fp_coords_copy, (uint32_t)_aligned_dim);
+                cur_expand_dist = _pq_table->get_distance_by_row(cached_nhood.firs);
             }
             else
             {
@@ -1589,7 +1590,8 @@ uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
             float cur_expanded_dist;
             if (!_use_disk_index_pq)
             {
-                cur_expanded_dist = _dist_cmp->compare(aligned_query_T, data_buf, (uint32_t)_aligned_dim);
+                //cur_expanded_dist = _dist_cmp->compare(aligned_query_T, data_buf, (uint32_t)_aligned_dim);
+                cur_expanded_dist = _pq_table->get_distance_by_row(frontier_nhood.first);
             }
             else
             {
@@ -1700,6 +1702,7 @@ uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
             auto id = full_retset[i].id;
             // MULTISECTORFIX
             auto location = (sector_scratch + i * defaults::SECTOR_LEN) + VECTOR_SECTOR_OFFSET(id);
+            // reorder
             full_retset[i].distance = _dist_cmp->compare(aligned_query_T, (T *)location, (uint32_t)this->_data_dim);
         }
 
