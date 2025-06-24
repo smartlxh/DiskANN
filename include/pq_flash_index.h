@@ -110,6 +110,10 @@ template <typename T, typename LabelT = uint32_t> class PQFlashIndex
     DISKANN_DLLEXPORT std::vector<std::uint8_t> get_pq_vector(std::uint64_t vid);
     DISKANN_DLLEXPORT uint64_t get_num_points();
 
+    PQTableBase* get_pq_table() {
+        return _pq_table.get();
+    }
+
   protected:
     DISKANN_DLLEXPORT void use_medoids_data_as_centroids();
     DISKANN_DLLEXPORT void setup_thread_data(uint64_t nthreads, uint64_t visited_reserve = 4096);
@@ -137,6 +141,9 @@ template <typename T, typename LabelT = uint32_t> class PQFlashIndex
 
     // returns region of `node_buf` containing [COORD(T)]
     DISKANN_DLLEXPORT T *offset_to_node_coords(char *node_buf);
+
+    // returns region of `node_buf` containing [COORD(T)]
+    // returns region of `node_buf` containing [COORD(T)]
 
     // index info for multi-node sectors
     // nhood of node `i` is in sector: [i / nnodes_per_sector]

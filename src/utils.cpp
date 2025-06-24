@@ -175,6 +175,59 @@ double calculate_recall(uint32_t num_queries, uint32_t *gold_std, float *gs_dist
 }
 
 double calculate_recall(uint32_t num_queries, uint32_t *gold_std, float *gs_dist, uint32_t dim_gs,
+                        uint32_t *our_results, float *our_dist, uint32_t dim_or, uint32_t recall_at, PQTableBase* pq_table)
+{
+    double total_recall = 0;
+    std::set<uint32_t> gt, res;
+
+    for (size_t i = 0; i < 1; i++)
+    {
+        gt.clear();
+        res.clear();
+        uint32_t *gt_vec = gold_std + dim_gs * i;
+        uint32_t *res_vec = our_results + dim_or * i;
+        float* res_dist_vec = our_dist + dim_or * i;
+        size_t tie_breaker = recall_at;
+        if (gs_dist != nullptr)
+        {
+            tie_breaker = recall_at - 1;
+            float *gt_dist_vec = gs_dist + dim_gs * i;
+            while (tie_breaker < dim_gs && gt_dist_vec[tie_breaker] == gt_dist_vec[recall_at - 1])
+                tie_breaker++;
+        }
+
+        gt.insert(gt_vec, gt_vec + tie_breaker);
+        res.insert(res_vec,
+                   res_vec + recall_at); // change to recall_at for recall k@k
+                                         // or dim_or for k@dim_or
+        // print result
+        for (int i = 0; i < recall_at; i++) {
+            diskann::cout << "res[" << i << "] = " << *(res_vec + i) << std::endl;
+            diskann::cout << "res_dist[" << i << "] = " << *(res_dist_vec + i) << std::endl;
+        }
+        float *gt_dist_vec = gs_dist + dim_gs * i;
+        for (int i = 0; i < tie_breaker; i++) {
+            diskann::cout << "gt[" << i << "] = " << *(gt_vec + i) << std::endl;
+            diskann::cout << "gt_dist_vec[" << i << "] = " << *(gt_dist_vec + i) << std::endl;
+            if (pq_table != nullptr) {
+                diskann::cout << "pq_table->get_vector(" << *(gt_vec + i) << ") = " << pq_table->get_distance_by_row(*(gt_vec + i)) << std::endl;
+            }
+        }
+
+        uint32_t cur_recall = 0;
+        for (auto &v : gt)
+        {
+            if (res.find(v) != res.end())
+            {
+                cur_recall++;
+            }
+        }
+        total_recall += cur_recall;
+    }
+    return total_recall / (num_queries) * (100.0 / recall_at);
+}
+
+double calculate_recall(uint32_t num_queries, uint32_t *gold_std, float *gs_dist, uint32_t dim_gs,
                         uint32_t *our_results, uint32_t dim_or, uint32_t recall_at,
                         const tsl::robin_set<uint32_t> &active_tags)
 {
