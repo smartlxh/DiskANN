@@ -25,7 +25,7 @@ struct Neighbor
 
     inline bool operator<(const Neighbor &other) const
     {
-        return distance < other.distance || (distance == other.distance && id < other.id);
+        return distance > other.distance || (distance == other.distance && id < other.id);
     }
 
     inline bool operator==(const Neighbor &other) const
@@ -54,44 +54,34 @@ class NeighborPriorityQueue
     // next item will be set to the lowest index of an uncheck item
     void insert(const Neighbor &nbr)
     {
-        if (_size == _capacity && _data[_size - 1] < nbr)
-        {
+        if (_size == _capacity && nbr < _data[_size - 1]) {
             return;
         }
 
         size_t lo = 0, hi = _size;
-        while (lo < hi)
-        {
+        while (lo < hi) {
             size_t mid = (lo + hi) >> 1;
-            if (nbr < _data[mid])
-            {
-                hi = mid;
-                // Make sure the same id isn't inserted into the set
-            }
-            else if (_data[mid].id == nbr.id)
-            {
-                return;
-            }
-            else
-            {
+            if (nbr < _data[mid]) {
                 lo = mid + 1;
+            } else if (_data[mid].id == nbr.id) {
+                return;
+            } else {
+                hi = mid;
             }
         }
 
-        if (lo < _capacity)
-        {
+        if (lo < _capacity) {
             std::memmove(&_data[lo + 1], &_data[lo], (_size - lo) * sizeof(Neighbor));
         }
         _data[lo] = {nbr.id, nbr.distance};
-        if (_size < _capacity)
-        {
+        if (_size < _capacity) {
             _size++;
         }
-        if (lo < _cur)
-        {
+        if (lo < _cur) {
             _cur = lo;
         }
     }
+
 
     Neighbor closest_unexpanded()
     {
