@@ -25,7 +25,7 @@ struct Neighbor
 
     inline bool operator<(const Neighbor &other) const
     {
-        return distance < other.distance || (distance == other.distance && id < other.id);
+        return distance > other.distance || (distance == other.distance && id < other.id);
     }
 
     inline bool operator==(const Neighbor &other) const
@@ -101,6 +101,7 @@ class NeighborPriorityQueue
         {
             _cur++;
         }
+        diskann::cout << "closest_unexpanded: " << _data[pre].id << " " << _data[pre].distance << std::endl;
         return _data[pre];
     }
 
