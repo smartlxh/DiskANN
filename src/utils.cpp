@@ -155,7 +155,7 @@ double calculate_recall(uint32_t num_queries, uint32_t *gold_std, float *gs_dist
         for (int i = 0; i < recall_at; i++) {
             diskann::cout << "res[" << i << "] = " << *(res_vec + i) << std::endl;
         }
-
+        float *gt_dist_vec = gs_dist + dim_gs * i;
         for (int i = 0; i < tie_breaker; i++) {
             diskann::cout << "gt[" << i << "] = " << *(gt_vec + i) << std::endl;
             diskann::cout << "gt_dist_vec[" << i << "] = " << *(gt_dist_vec + i) << std::endl;
