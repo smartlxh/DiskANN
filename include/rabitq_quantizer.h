@@ -68,10 +68,6 @@ class RabitqQuantizer : public PQTableBase {
         return ndim;
     }
 
-    float get_distance_by_row(uint32_t row_id) override {
-        return distance_to_code(codes + row_id * code_size);
-    };
-
     void load_pq_compressed_vectors(const std::string &bin_file, uint8_t* &data) override;
 
 #ifdef EXEC_ENV_OLS

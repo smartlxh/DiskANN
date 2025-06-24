@@ -29,7 +29,6 @@ typedef int FileHandle;
 #include "types.h"
 #include "tag_uint128.h"
 #include <any>
-#include "pq_table_base.h"
 
 #ifdef EXEC_ENV_OLS
 #include "content_buf.h"
@@ -679,9 +678,6 @@ DISKANN_DLLEXPORT double calculate_recall(unsigned num_queries, unsigned *gold_s
 DISKANN_DLLEXPORT double calculate_recall(unsigned num_queries, unsigned *gold_std, float *gs_dist, unsigned dim_gs,
                                           unsigned *our_results, unsigned dim_or, unsigned recall_at,
                                           const tsl::robin_set<unsigned> &active_tags);
-
-DISKANN_DLLEXPORT double calculate_recall(uint32_t num_queries, uint32_t *gold_std, float *gs_dist, uint32_t dim_gs,
-                        uint32_t *our_results, float *our_dist, uint32_t dim_or, uint32_t recall_at, PQTableBase* pq_table);
 
 DISKANN_DLLEXPORT double calculate_range_search_recall(unsigned num_queries,
                                                        std::vector<std::vector<uint32_t>> &groundtruth,

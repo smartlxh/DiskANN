@@ -32,10 +32,6 @@ class PQTableBase {
 
     virtual void load_pq_compressed_vectors(const std::string &bin_file, uint8_t* &data) = 0;
 
-    virtual float get_distance_by_row(uint32_t row_id) {
-        return 0.0f;
-    };
-
 #ifdef EXEC_ENV_OLS
     virtual void load_pq_centroid_bin(MemoryMappedFiles &files, const char *pq_table_file, size_t num_chunks) {};
 #else
