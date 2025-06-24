@@ -1643,8 +1643,18 @@ uint8_t *data, uint8_t *pq_coord_scratch, float* pq_dists) override {
         hops++;
     }
 
+    diskann::cout << "before sort";
+    for (int i = 0;i<10;i<full_retset.size();i++)
+    {
+        diskann::cout << full_retset[i].id << " ";
+    }
     // re-sort by distance
     std::sort(full_retset.begin(), full_retset.end());
+    diskann::cout << "after sort";
+    for (int i = 0;i<10;i<full_retset.size();i++)
+    {
+        diskann::cout << full_retset[i].id << " ";
+    }
 
     if (use_reorder_data)
     {
