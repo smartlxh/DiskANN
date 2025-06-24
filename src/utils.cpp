@@ -158,6 +158,7 @@ double calculate_recall(uint32_t num_queries, uint32_t *gold_std, float *gs_dist
 
         for (int i = 0; i < tie_breaker; i++) {
             diskann::count << "gt[" << i << "] = " << *(gt_vec + i) << std::endl;
+            diskann::count << "gt_dist_vec[" << i << "] = " << *(gt_dist_vec + i) << std::endl;
         }
 
         uint32_t cur_recall = 0;
