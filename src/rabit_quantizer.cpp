@@ -337,7 +337,6 @@ float RabitqQuantizer::distance_to_code(const uint8_t* code) {
 
         if (metric_type == diskann::Metric::L2) {
             // ||or - q||^ 2
-            diskann::cout << "L2 dddddddddddddddd" << std::endl;
             return pre_dist;
         } else {
             // metric == MetricType::METRIC_INNER_PRODUCT
