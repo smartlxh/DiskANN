@@ -99,7 +99,7 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
     for (int i=0;i<npt;i++) {
         diskann::cout << "point: " << i << std::endl;
          for (int j=0;j<code_size;j++) {
-            diskann::cout << " " << codes[i * code_size + j];
+            diskann::cout << " " << (int)codes[i * code_size + j];
         }
     }
 
