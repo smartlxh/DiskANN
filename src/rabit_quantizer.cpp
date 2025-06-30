@@ -95,6 +95,13 @@ void RabitqQuantizer::train(size_t n, const float* x, const std::string data_fil
 
     codes = new uint8_t[npt * code_size];
     compute_codes(block_data_T.get(), codes, npt);
+    diskann::cout << "code_size " << code_size;
+    for (int i=0;i<npt;i++) {
+        diskann::cout << "point: " << i << std::endl;
+         for (int j=0;j<code_size;j++) {
+            diskann::cout << " " << codes[i * code_size + j];
+        }
+    }
 
     diskann::cout << "train done and print code" << std::endl;
     preprocess_query(first_point);

@@ -58,7 +58,8 @@ int main(int argc, char **argv)
     reader.seekg(0, std::ios::beg);
     size_t ndims = (size_t)ndims_u32;
     size_t npts = fsize / ((ndims * datasize) + sizeof(uint32_t));
-    std::cout << "Dataset: #pts = " << npts << ", # dims = " << ndims << std::endl;
+    std::cout << "Dataset: #pts = " << npts << ", # dims = " << ndims << "fsize" << fsize << std::endl;
+    sleep(1000);
 
     size_t blk_size = 131072;
     size_t nblks = ROUND_UP(npts, blk_size) / blk_size;
