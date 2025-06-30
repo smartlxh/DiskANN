@@ -25,7 +25,7 @@ float RabitqQuantizer::fvec_norm_L2sqr(const float* x, size_t d) {
 
 void RabitqQuantizer::train(size_t n, const float* x, const std::string data_file) {
     // read full-precision vector
-    auto base_data_file = "data/sift/sift_learn.fbin";
+    auto base_data_file = "data/sift/sift_base.fbin";
     size_t read_blk_size = 64 * 1024 * 1024;
     cached_ifstream base_reader(base_data_file, read_blk_size);
     uint32_t npts32;
